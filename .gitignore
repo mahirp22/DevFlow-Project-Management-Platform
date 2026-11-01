@@ -1,0 +1,20 @@
+# Build outputs and local tooling
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/coverage/
+**/TestResults/
+.vs/
+.idea/
+*.user
+*.suo
+*.log
+# Secrets and local overrides
+.env
+.env.*
+!.env.example
+**/appsettings.Local.json
+*.pfx
+*.pem
+*.key
