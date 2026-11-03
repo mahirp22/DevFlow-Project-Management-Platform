@@ -2,9 +2,9 @@
 
 A cloud-based project management platform built incrementally as a software engineering portfolio project.
 
-**Current milestone: Phase 2 — PostgreSQL and API foundation.**
+**Current milestone: Phase 3 — React frontend foundation.**
 
-Implemented: strict React/TypeScript starter, API connection check, layered ASP.NET Core backend, PostgreSQL/EF Core persistence, initial core-schema migration, liveness/readiness endpoints, development OpenAPI, safe Problem Details responses, structured logs, and xUnit unit/integration tests.
+Implemented: responsive React/TypeScript shell, Tailwind styling, React Router, TanStack Query, API/database connection checks, Vitest/React Testing Library tests, layered ASP.NET Core backend, PostgreSQL/EF Core persistence, initial core-schema migration, liveness/readiness endpoints, development OpenAPI, safe Problem Details responses, structured logs, and xUnit unit/integration tests.
 
 Not yet implemented: authentication, workspace/project/task HTTP CRUD, Kanban, real-time updates, uploads, or cloud deployment. This starter is for local development and must not be exposed as a production service.
 
@@ -14,7 +14,8 @@ Not yet implemented: authentication, workspace/project/task HTTP CRUD, Kanban, r
 2. Review [architecture](docs/architecture.md) and [data model](docs/data-model.md).
 3. Follow the [phase plan](docs/roadmap.md).
 4. Follow [Phase 2 database setup, migration and testing](docs/phase-2.md).
-5. The [Phase 1 report](docs/phase-1.md) preserves the earlier milestone.
+5. Follow [Phase 3 frontend setup, architecture and tests](docs/phase-3.md).
+6. The [Phase 1 report](docs/phase-1.md) preserves the earlier milestone.
 
 ## Quick start
 
@@ -34,19 +35,20 @@ Terminal 2:
 
 ~~~powershell
 Set-Location frontend
-npm ci
-npm run dev
+npm.cmd ci
+npm.cmd run dev
 ~~~
 
-Open http://127.0.0.1:5173 and select **Check API connection**. The API listens on http://127.0.0.1:5080. The frontend development proxy forwards /api requests without requiring permissive CORS.
+Open http://127.0.0.1:5173 and open **Connection**, then select **Check api** or **Check database**. The API listens on http://127.0.0.1:5080. The frontend development proxy forwards /api requests without requiring permissive CORS.
 
 ## Verify
 
 ~~~powershell
 dotnet build backend/DevFlow.slnx --no-restore
 Set-Location frontend
-npm run lint
-npm run build
+npm.cmd test
+npm.cmd run lint
+npm.cmd run build
 ~~~
 
 Backend: GET /api/health checks liveness. GET /api/health/ready checks database connectivity and migration state. GET /openapi/v1.json serves the development OpenAPI document and includes both health endpoints.

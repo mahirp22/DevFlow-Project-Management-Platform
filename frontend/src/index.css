@@ -1,21 +1,76 @@
-:root { font-family: Inter, "Segoe UI", sans-serif; color: #192b31; background: #f5f7f6; font-synthesis: none; text-rendering: optimizeLegibility; }
-* { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; }
-main { max-width: 1040px; margin: 0 auto; padding: 40px 28px; }
-.brand { display: flex; align-items: center; gap: 10px; font-size: 21px; font-weight: 700; }
-.brand span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; color: white; background: #176650; font-size: 20px; }
-section { padding: 76px 0 48px; max-width: 680px; }
-.eyebrow { color: #176650; font-size: 12px; font-weight: 700; letter-spacing: .16em; }
-h1 { font-size: clamp(40px, 7vw, 68px); line-height: 1.06; letter-spacing: -.045em; font-weight: 650; margin: 24px 0; }
-.intro { font-size: 18px; line-height: 1.7; color: #52646a; max-width: 580px; }
-.connection { margin-top: 36px; padding: 24px; background: white; border: 1px solid #dce4e1; border-radius: 12px; }
-h2 { font-size: 17px; margin: 0; }
-.connection p { color: #52646a; line-height: 1.6; }
-button { font: inherit; font-weight: 600; cursor: pointer; color: white; background: #176650; border: 0; border-radius: 7px; padding: 12px 18px; }
-button:hover { background: #104c3b; }
-button:disabled { opacity: .65; cursor: wait; }
-button:focus-visible { outline: 3px solid #246dbe; outline-offset: 4px; }
-.note { font-size: 13px; line-height: 1.6; color: #52646a; margin-top: 22px; }
-footer { border-top: 1px solid #dce4e1; padding-top: 20px; font-size: 12px; color: #52646a; }
-footer span { margin: 0 10px; }
-@media (max-width: 480px) { main { padding: 24px 20px; } section { padding-top: 48px; } }
+﻿@import "tailwindcss";
+
+@theme { --font-sans: 'Segoe UI', system-ui, sans-serif; }
+@layer base {
+  body { @apply m-0 bg-[#f8fafb] text-slate-800 antialiased; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  button { cursor: pointer; }
+  button:disabled { cursor: wait; opacity: .65; }
+  :focus-visible { outline: 3px solid #0e8078; outline-offset: 4px; }
+  h1 { @apply text-3xl font-semibold tracking-tight md:text-4xl; }
+  h2 { @apply text-lg font-semibold tracking-tight; }
+  h3 { @apply font-semibold; }
+}
+@layer components {
+  .app-shell { @apply min-h-screen md:grid md:grid-cols-[240px_minmax(0,1fr)]; }
+  .sidebar { @apply relative border-b border-slate-200 bg-white px-5 py-6 md:min-h-screen md:border-r md:border-b-0; }
+  .brand { @apply flex items-center gap-2 text-2xl font-bold tracking-tight; }
+  .brand-mark { @apply mr-1 grid h-9 w-9 place-items-center rounded-xl bg-teal-700 text-xl text-white; }
+  .brand-dot { @apply -ml-2 text-teal-600; }
+  .sidebar-content { @apply hidden md:flex md:min-h-[calc(100vh-100px)] md:flex-col; }
+  .sidebar-content.is-open { @apply flex flex-col; }
+  .workspace { @apply mt-10 mb-8 flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm; }
+  .workspace small { @apply mt-1 block text-xs text-slate-500; }
+  .workspace-avatar { @apply grid h-9 w-9 place-items-center rounded-md bg-slate-100 font-semibold; }
+  .nav-caption { @apply mb-3 px-3 text-[10px] font-semibold tracking-[.16em] text-slate-500; }
+  .nav-link { @apply mb-1 flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900; }
+  .nav-link span { @apply w-5 text-xl leading-none; }
+  .nav-link.active { @apply bg-teal-50 text-teal-800; }
+  .sidebar-note { @apply mt-auto pt-16 text-xs leading-6 text-slate-600; }
+  .sidebar-note p { @apply mt-2 text-slate-500; }
+  .status-dot { @apply mr-2 inline-block h-1.5 w-1.5 rounded-full bg-teal-600; }
+  .menu-toggle { @apply absolute top-6 right-5 md:hidden; }
+  .topbar { @apply flex min-h-18 items-center justify-between gap-4 border-b border-slate-200 bg-white px-6 text-xs text-slate-500 md:px-10; }
+  .preview-badge { @apply whitespace-nowrap rounded-full border border-slate-200 px-3 py-1 text-[11px]; }
+  .page { @apply mx-auto max-w-7xl px-6 py-10 outline-none md:px-10 lg:py-12; }
+  .page-heading { @apply mb-9 flex flex-wrap items-center justify-between gap-5; }
+  .page-heading p:not(.eyebrow) { @apply mt-3 text-sm text-slate-500; }
+  .eyebrow { @apply mb-3 block text-[10px] font-semibold tracking-[.18em] text-teal-700; }
+  .subtle-tag { @apply inline-block rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-500; }
+  .welcome-panel { @apply grid overflow-hidden rounded-2xl border border-[#d8e7e4] bg-[#eef6f3] p-8 md:grid-cols-2 lg:p-10; }
+  .welcome-panel h2 { @apply text-3xl leading-tight tracking-tight lg:text-4xl; }
+  .welcome-panel p { @apply mt-4 mb-7 max-w-sm text-sm leading-7 text-slate-600; }
+  .button-primary { @apply inline-flex items-center justify-center gap-6 rounded-lg bg-teal-800 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-teal-900; }
+  .button-secondary { @apply inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50; }
+  .flow-art { @apply relative hidden flex-col justify-center gap-5 pl-8 md:flex; }
+  .flow-card { @apply relative z-10 flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm; transform: rotate(-4deg); }
+  .flow-card.offset { @apply ml-6; transform: rotate(3deg); }
+  .flow-card strong { @apply text-xs font-medium; }
+  .flow-card i { @apply mt-2 block h-1.5 w-32 rounded bg-slate-100; }
+  .flow-card i:last-child { @apply w-20; }
+  .art-icon { @apply grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-orange-50 text-xl text-orange-700; }
+  .art-icon.mint { @apply bg-teal-50 text-teal-700; }
+  .art-caption { @apply mt-3 text-center text-[9px] tracking-[.22em] text-teal-700; }
+  .section-heading { @apply mt-10 mb-5 flex flex-wrap items-center justify-between gap-2; }
+  .section-heading span { @apply text-xs text-slate-500; }
+  .feature-card { @apply rounded-xl border border-slate-200 bg-white p-6 transition-colors hover:border-teal-400; }
+  .feature-icon { @apply mb-6 grid h-9 w-9 place-items-center rounded-lg bg-slate-50 text-xl text-teal-700; }
+  .feature-card h3 { @apply flex justify-between text-sm; }
+  .feature-card h3 span { @apply text-slate-400; }
+  .feature-card p { @apply mt-2 text-xs leading-6 text-slate-500; }
+  .getting-started { @apply mt-8 flex flex-wrap items-center gap-5 rounded-xl border border-slate-200 p-6; }
+  .getting-started h2 { @apply text-sm; }
+  .getting-started p { @apply mt-2 max-w-lg text-xs leading-6 text-slate-500; }
+  .step-number { @apply grid h-10 w-10 place-items-center rounded-full border border-slate-200 text-xs text-slate-500; }
+  .text-link { @apply inline-block text-sm font-medium text-teal-800 hover:underline; }
+  .empty-state { @apply flex min-h-96 flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-8 text-center; }
+  .empty-icon { @apply mb-6 grid h-16 w-16 place-items-center rounded-2xl bg-teal-50 text-3xl text-teal-700; }
+  .empty-state p:not(.eyebrow) { @apply my-4 max-w-md text-sm leading-7 text-slate-500; }
+  .connection-card { @apply rounded-xl border border-slate-200 bg-white p-7; }
+  .connection-card p { @apply mt-2 text-sm leading-6 text-slate-500; }
+  .connection-indicator { @apply mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-slate-300; }
+  .connection-indicator.healthy { @apply bg-teal-600; }
+  .connection-result { @apply my-6 rounded-lg bg-slate-50 p-4 text-sm leading-6; }
+  .skip-link { @apply fixed -top-20 left-4 z-50 rounded bg-teal-900 p-3 text-white focus:top-4; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }

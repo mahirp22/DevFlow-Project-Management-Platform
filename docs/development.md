@@ -70,7 +70,7 @@ Invoke-RestMethod http://127.0.0.1:5080/openapi/v1.json
 Invoke-RestMethod http://127.0.0.1:5173/api/health
 ~~~
 
-The third check tests the frontend proxy. Stop the backend and select Check API connection to verify the unavailable state. The button has a five-second timeout and an accessible status announcement.
+The third check tests the frontend proxy. Open Connection, stop the backend and select Check api to verify the unavailable state. Requests have an eight-second timeout and accessible status announcements. Check database verifies database connectivity and migrations independently.
 
 Ports are fixed to avoid silent port changes. If a port is occupied, stop its owner or deliberately update launchSettings.json and vite.config.ts together.
 
@@ -86,4 +86,4 @@ AWS credentials will use developer profiles locally and IAM task roles in ECS. D
 
 ## Tests
 
-Phase 2 includes xUnit domain tests and integration tests against real PostgreSQL, including relational constraints, optimistic concurrency, readiness and HTTP error behavior. See [Phase 2](phase-2.md) for Docker and external-database test commands. Phase 3 adds Vitest/React Testing Library. Authorization and upload controls receive tests with their features.
+Phase 2 includes xUnit domain tests and integration tests against real PostgreSQL, including relational constraints, optimistic concurrency, readiness and HTTP error behavior. See [Phase 2](phase-2.md) for Docker and external-database test commands. Phase 3 includes 11 Vitest/React Testing Library tests. Run npm.cmd test from frontend; see [Phase 3](phase-3.md) for the frontend walkthrough and architecture. Authorization and upload controls receive tests with their features.

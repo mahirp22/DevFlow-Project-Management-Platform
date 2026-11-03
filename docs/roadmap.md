@@ -15,4 +15,4 @@
 
 Tests accompany features; Phase 9 consolidates them. Every major phase requires user approval before starting. Every Git commit requires explicit approval. Each milestone documents changed files, decisions, run commands and actual verification results.
 
-Phase 1 was committed as `2411723` (`chore: establish DevFlow phase 1 foundation`). Phase 2 is complete, verified with local PostgreSQL and Docker, and approved for its milestone commit. See [Phase 2](phase-2.md) for setup and verification. Phase 3 requires separate approval.
+Phase 1 was committed as `2411723` (`chore: establish DevFlow phase 1 foundation`). Phase 2 was committed as 1ce62c6 after local PostgreSQL and Docker verification. See [Phase 2](phase-2.md). Phase 3 implementation and automated checks are complete; real-browser visual review remains outstanding because browser automation was unavailable. See [Phase 3](phase-3.md). The user confirmed the frontend runs and approved the Phase 3 milestone commit after verification. Phase 4 requires separate approval.
