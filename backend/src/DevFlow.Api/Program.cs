@@ -1,39 +1,37 @@
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using DevFlow.Api.ErrorHandling;
+using DevFlow.Api.Health;
+using DevFlow.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Logging.ClearProviders();
 builder.Logging.AddJsonConsole();
 builder.Services.AddControllers();
-builder.Services.AddProblemDetails();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var factory = context.HttpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
+        var problem = factory.CreateValidationProblemDetails(context.HttpContext, context.ModelState);
+        problem.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+        var result = new BadRequestObjectResult(problem);
+        result.ContentTypes.Add("application/problem+json");
+        return result;
+    };
+});
+builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
+    context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier);
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddOpenApi();
-builder.Services.AddHealthChecks();
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddHealthChecks().AddCheck<PostgreSqlReadinessCheck>("postgresql", tags: ["ready"]);
 
 var app = builder.Build();
-
-app.UseExceptionHandler();
+app.UseExceptionHandler(new ExceptionHandlerOptions { SuppressDiagnosticsCallback = _ => true });
 app.UseStatusCodePages();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-// Liveness only: database readiness will be introduced in Phase 2.
-app.MapHealthChecks("/api/health", new HealthCheckOptions
-{
-    ResponseWriter = async (context, report) =>
-    {
-        await context.Response.WriteAsJsonAsync(new
-        {
-            status = report.Status == HealthStatus.Healthy ? "Healthy" : "Unhealthy"
-        });
-    }
-});
-
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 app.MapControllers();
 app.Run();
 
-// Enables WebApplicationFactory integration tests in a later phase.
 public partial class Program { }

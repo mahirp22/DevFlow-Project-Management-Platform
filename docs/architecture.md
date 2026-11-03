@@ -20,7 +20,7 @@ ECR stores container images. Secrets Manager holds runtime secrets. Deployment i
 
 Domain contains entities and business rules with no infrastructure dependencies. Application contains use cases, DTOs, validation and focused interfaces. Infrastructure implements persistence and external services. API handles HTTP, identity, authorization policies, SignalR transport and dependency injection composition.
 
-References: Application -> Domain; Infrastructure -> Application and Domain; API -> Application and Infrastructure. The API's Infrastructure reference exists for composition. Controllers call use cases rather than querying the database. Empty class libraries intentionally have no placeholder business services.
+References: Application -> Domain; Infrastructure -> Application and Domain; API -> Application and Infrastructure. The API's Infrastructure reference exists for composition. Controllers call use cases rather than querying the database. Phase 2 adds core domain entities, EF mappings and health infrastructure; business use cases remain for later phases.
 
 Use scoped services for request use cases and EF DbContext when introduced. Avoid generic repositories that merely duplicate DbSet and SaveChanges. Add narrowly scoped query/storage interfaces when they clarify a boundary. No mediator framework or message broker is required at this stage.
 

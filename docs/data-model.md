@@ -1,4 +1,6 @@
-# Proposed data model — not implemented
+# Data model
+
+Phase 2 implements UserProfile, Workspace, WorkspaceMembership, Project, ProjectMembership and TaskItem in the initial migration. Invitations, comments, attachments and activity below remain planned for their feature phases. Read [Phase 2](phase-2.md) for mapping details and deliberate limitations.
 
 Workspace is the tenant boundary. Each project belongs to one workspace; each task belongs to one project. The initial product allows one optional assignee per task.
 
@@ -31,3 +33,5 @@ Task statuses: ToDo, InProgress, InReview, Completed. Backward moves are allowed
 Indexes will target project/status, project/assignee, due date, and task/activity time. Board ordering is persisted within columns; moves update ordering atomically and validate a concurrency version. We will choose a simple ordering strategy in Phase 6 based on measured needs.
 
 Analytics initially query tasks/activity for status counts, overdue tasks, workload and completion trends. No analytics table is required in Phase 1. Invitation links can initially be shared manually; automated email requires a separately chosen delivery service.
+
+The implemented schema enforces workspace/project membership consistency with composite foreign keys, optional task assignees through project membership, unique project keys within workspaces, unique task numbers within projects, allowed enum values, and restrictive deletion. Task Version maps to PostgreSQL xmin. Application authorization, preserving the last owner, updating UpdatedAt, task-number allocation and board ordering are still future use-case responsibilities.

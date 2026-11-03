@@ -5,4 +5,8 @@
     <Project Path="src/DevFlow.Domain/DevFlow.Domain.csproj" />
     <Project Path="src/DevFlow.Infrastructure/DevFlow.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DevFlow.IntegrationTests/DevFlow.IntegrationTests.csproj" />
+    <Project Path="tests/DevFlow.UnitTests/DevFlow.UnitTests.csproj" />
+  </Folder>
 </Solution>

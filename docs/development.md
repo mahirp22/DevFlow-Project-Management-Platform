@@ -8,7 +8,8 @@
 | Node.js | 24.22.1 | Frontend tooling |
 | npm | 11.19.1 | Reproducible dependency installation |
 | Git | Supported stable release | Milestone history |
-| Docker Desktop | Required in Phase 2 | Local PostgreSQL and integration tests |
+| PostgreSQL 18.6 | Required from Phase 2 | Local persistence |
+| Docker Desktop | Recommended | Compose database and Testcontainers lifecycle |
 
 global.json permits SDK patch updates in the selected feature band and excludes previews. .node-version records Node; package.json constrains its major version and pins direct dependencies. package-lock.json and NuGet packages.lock.json record resolved dependencies. Review dependency updates deliberately.
 
@@ -59,7 +60,7 @@ TLS verification remains enabled. Do not disable strict-ssl.
 
 ## Run and verify
 
-Follow the root README commands. npm ci restores the exact lockfile. dotnet restore --locked-mode detects unexpected dependency changes. Use separate terminals for frontend and backend; stop each with Ctrl+C.
+Follow the root README and [Phase 2](phase-2.md) commands. The API now requires `ConnectionStrings__DevFlow`; the Phase 2 guide explains the current workspace database and Docker alternatives. npm ci restores the exact lockfile. dotnet restore --locked-mode detects unexpected dependency changes. Use separate terminals for frontend and backend; stop each with Ctrl+C.
 
 Direct checks:
 
@@ -85,4 +86,4 @@ AWS credentials will use developer profiles locally and IAM task roles in ECS. D
 
 ## Tests
 
-Phase 1 is validated by compilation, linting and HTTP smoke checks. There is no automated feature test suite yet, and an empty test run must not be reported as passing coverage. Phase 2 adds xUnit integration tests against real PostgreSQL; Phase 3 adds Vitest/React Testing Library for user-visible behavior. Authorization, concurrency, and upload controls receive tests with their features.
+Phase 2 includes xUnit domain tests and integration tests against real PostgreSQL, including relational constraints, optimistic concurrency, readiness and HTTP error behavior. See [Phase 2](phase-2.md) for Docker and external-database test commands. Phase 3 adds Vitest/React Testing Library. Authorization and upload controls receive tests with their features.

@@ -1,3 +1,3 @@
 # Infrastructure
 
-Phase 1 creates no cloud resources. Local PostgreSQL Compose configuration begins in Phase 2. Container and AWS deployment definitions will be added before deployment in Phase 8; CI/CD hardening follows in Phase 9.
+Local PostgreSQL Compose configuration is in docker/compose.yaml. See [Phase 2](../docs/phase-2.md) for secrets, startup, migrations, and the current workspace alternative. Docker requires a password and binds the database to loopback only. No cloud resources exist. Container/AWS deployment definitions arrive before Phase 8 deployment; CI/CD hardening follows in Phase 9.
