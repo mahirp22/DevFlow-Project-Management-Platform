@@ -32,13 +32,13 @@ Use Problem Details for errors and structured logs with trace/request identifier
 
 ## Identity and tenant isolation
 
-Cognito owns registration, credentials and login. The SPA uses authorization code + PKCE with a public client. The backend validates access-token signature, issuer, lifetime, token_use and intended client/resource before authorizing application data. Cognito subject maps to UserProfile; email is not the identity key. Token lifecycle/storage is finalized in Phase 4, with no browser client secret.
+Cognito owns registration, credentials and login. The SPA uses authorization code + PKCE with a public client. The backend validates access-token signature, issuer, lifetime, token_use and intended client/resource before authorizing application data. Cognito subject maps to UserProfile; email is not the identity key. Phase 4 uses an in-memory OIDC user store, sessionStorage only for authorization transaction state, and no browser client secret. Reload/expiration requires sign-in again; query data clears on logout/expiry. See [Phase 4](phase-4.md) for offline JWT revocation limitations.
 
 Workspace is the tenant boundary. Project membership gates collaboration. Workspace owners/admins can administer projects; project managers manage membership/content; members collaborate; viewers read. Every data operation and SignalR group subscription checks access server-side. URL identifiers and UI visibility are never authorization.
 
 ## Frontend
 
-React renders UI; strict TypeScript checks source contracts. Runtime responses still need validation where appropriate. React Router will handle navigation; TanStack Query will own server-state caching and mutations. Feature-local components and hooks keep code near its use case. Shared UI is extracted when genuinely reused. Tailwind tokens and responsive layout arrive in Phase 3.
+React renders UI; strict TypeScript checks source contracts. Runtime responses still need validation where appropriate. React Router handles navigation; TanStack Query owns server-state caching and mutations. Feature-local components and hooks keep code near its use case. Shared UI is extracted when genuinely reused. Tailwind and responsive layout were added in Phase 3. Phase 4 adds protected routes and Cognito session handling; server authorization remains authoritative.
 
 ## Real-time and consistency
 

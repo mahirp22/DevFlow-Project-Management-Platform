@@ -92,12 +92,12 @@ public sealed class ApiTests(PostgresFixture fixture)
     }
 
     [Fact]
-    public async Task Unknown_route_returns_404_problem_details()
+    public async Task Anonymous_unknown_route_returns_401_problem_details()
     {
         await using var factory = new ApiFactory(fixture.ConnectionString);
         using var client = factory.CreateClient();
         var response = await client.GetAsync("/api/not-a-route", TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
     }
 
@@ -110,8 +110,10 @@ public sealed class ApiTests(PostgresFixture fixture)
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         Assert.True(json.RootElement.GetProperty("paths").TryGetProperty("/api/health/ready", out _));
+        Assert.True(json.RootElement.GetProperty("components").GetProperty("securitySchemes").TryGetProperty("Bearer", out _));
+        Assert.Equal(1, json.RootElement.GetProperty("paths").GetProperty("/api/me").GetProperty("get").GetProperty("security").GetArrayLength());
         await using var production = new ApiFactory(fixture.ConnectionString, "Production");
         using var prodClient = production.CreateClient();
-        Assert.Equal(HttpStatusCode.NotFound, (await prodClient.GetAsync("/openapi/v1.json", TestContext.Current.CancellationToken)).StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await prodClient.GetAsync("/openapi/v1.json", TestContext.Current.CancellationToken)).StatusCode);
     }
 }

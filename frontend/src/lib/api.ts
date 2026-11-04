@@ -13,10 +13,16 @@ export class ApiError extends Error {
 // Public build-time configuration. Prefer same-origin /api in production.
 const baseUrl = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '')
 
-export async function getJson(path: string, signal?: AbortSignal): Promise<unknown> {
+export function getJson(path: string, signal?: AbortSignal, token?: string): Promise<unknown> {
+  return requestJson(path, { signal, token })
+}
+
+export async function requestJson(path: string, options: { method?: 'GET' | 'POST'; signal?: AbortSignal; token?: string } = {}): Promise<unknown> {
+  const { signal, token, method = 'GET' } = options
   const timeout = AbortSignal.timeout(8_000)
   const response = await fetch(`${baseUrl}${path}`, {
-    headers: { Accept: 'application/json' },
+    method,
+    headers: { Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
     cache: 'no-store',
     signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
   })

@@ -1,9 +1,11 @@
 using DevFlow.Application.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace DevFlow.IntegrationTests;
 
 [ApiController]
+[AllowAnonymous]
 [Route("test/pipeline")]
 public sealed class PipelineProbeController : ControllerBase
 {

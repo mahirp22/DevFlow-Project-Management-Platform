@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DevFlow.Application.Identity;
 namespace DevFlow.Api.ErrorHandling;
 
 public sealed class ApiExceptionHandler(IProblemDetailsService problems, ILogger<ApiExceptionHandler> logger) : IExceptionHandler
@@ -8,7 +9,9 @@ public sealed class ApiExceptionHandler(IProblemDetailsService problems, ILogger
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
         var conflict = exception is DbUpdateConcurrencyException;
-        var status = conflict ? StatusCodes.Status409Conflict : StatusCodes.Status500InternalServerError;
+        var unavailable = exception is IdentityProviderUnavailableException;
+        var status = unavailable ? StatusCodes.Status503ServiceUnavailable
+            : conflict ? StatusCodes.Status409Conflict : StatusCodes.Status500InternalServerError;
         // Log type and trace ID, not provider messages that might contain sensitive values.
         logger.Log(conflict ? LogLevel.Warning : LogLevel.Error,
             "Request failed with {ExceptionType}; trace {TraceId}", exception.GetType().Name, context.TraceIdentifier);
@@ -16,7 +19,8 @@ public sealed class ApiExceptionHandler(IProblemDetailsService problems, ILogger
         var problem = new ProblemDetails
         {
             Status = status,
-            Title = conflict ? "The resource was modified by another request." : "An unexpected error occurred.",
+            Title = unavailable ? "Sign-in services are temporarily unavailable."
+                : conflict ? "The resource was modified by another request." : "An unexpected error occurred.",
             Detail = conflict ? "Reload the resource and try again." : null
         };
         problem.Extensions["traceId"] = context.TraceIdentifier;

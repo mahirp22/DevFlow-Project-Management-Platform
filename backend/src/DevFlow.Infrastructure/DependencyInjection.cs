@@ -1,4 +1,6 @@
 using DevFlow.Infrastructure.Persistence;
+using DevFlow.Application.Identity;
+using DevFlow.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +15,8 @@ public static class DependencyInjection
             throw new InvalidOperationException("Configure ConnectionStrings:DevFlow using User Secrets or an environment variable.");
 
         services.AddDbContext<DevFlowDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddScoped<IUserProfiles, UserProfiles>();
+        services.AddScoped<IResourceAccess, ResourceAccessService>();
         return services;
     }
 }

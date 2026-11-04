@@ -1,5 +1,7 @@
 using DevFlow.Api.ErrorHandling;
 using DevFlow.Api.Health;
+using DevFlow.Api.Authentication;
+using DevFlow.Application.Identity;
 using DevFlow.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -23,14 +25,20 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
     context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier);
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options => options.AddDocumentTransformer<BearerSecurityDocument>());
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddCognitoAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
+builder.Services.AddHttpClient<IIdentityDirectory, CognitoIdentityDirectory>(client =>
+    client.Timeout = TimeSpan.FromSeconds(10))
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
 builder.Services.AddHealthChecks().AddCheck<PostgreSqlReadinessCheck>("postgresql", tags: ["ready"]);
 
 var app = builder.Build();
 app.UseExceptionHandler(new ExceptionHandlerOptions { SuppressDiagnosticsCallback = _ => true });
 app.UseStatusCodePages();
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+app.UseAuthentication();
+app.UseAuthorization();
+if (app.Environment.IsDevelopment()) app.MapOpenApi().AllowAnonymous();
 app.MapControllers();
 app.Run();
 

@@ -1,19 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
+import { useAuth } from '../features/auth/AuthContext'
 
 const navigation = [
   { to: '/', label: 'Overview', symbol: '◈' },
   { to: '/projects', label: 'Projects', symbol: '▦' },
   { to: '/tasks', label: 'My tasks', symbol: '☑' },
   { to: '/connection', label: 'Connection', symbol: '↔' },
+  { to: '/account', label: 'Account', symbol: '○' },
 ]
 
 export function AppLayout() {
+  const auth = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
   const main = useRef<HTMLElement>(null)
   useEffect(() => {
-    const title = navigation.find(item => item.to === location.pathname)?.label ?? 'Page not found'
+    const title = navigation.find(item => item.to === location.pathname)?.label
+      ?? (location.pathname === '/sign-in' ? 'Sign in' : location.pathname === '/auth/callback' ? 'Signing in' : 'Page not found')
     document.title = `${title} · DevFlow`
     main.current?.focus()
   }, [location.pathname])
@@ -33,7 +37,7 @@ export function AppLayout() {
       </div>
     </aside>
     <div className="min-w-0">
-      <header className="topbar"><span>Workspace <span className="mx-3 text-slate-300">/</span> {navigation.find(item => item.to === location.pathname)?.label ?? 'Page not found'}</span><span className="preview-badge">Local preview</span></header>
+      <header className="topbar"><span>Workspace <span className="mx-3 text-slate-300">/</span> {navigation.find(item => item.to === location.pathname)?.label ?? 'DevFlow'}</span><NavLink className="button-secondary" to={auth.user ? '/account' : '/sign-in'}>{auth.user ? 'Your account' : 'Sign in'}</NavLink></header>
       <main id="main" ref={main} tabIndex={-1} className="page"><Outlet /></main>
     </div>
   </div>

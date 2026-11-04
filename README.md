@@ -2,13 +2,17 @@
 
 A cloud-based project management platform built incrementally as a software engineering portfolio project.
 
-**Current milestone: Phase 3 — React frontend foundation.**
+**Current milestone: Phase 4 — authentication and authorization (live setup walkthrough confirmed by the user).**
 
 Implemented: responsive React/TypeScript shell, Tailwind styling, React Router, TanStack Query, API/database connection checks, Vitest/React Testing Library tests, layered ASP.NET Core backend, PostgreSQL/EF Core persistence, initial core-schema migration, liveness/readiness endpoints, development OpenAPI, safe Problem Details responses, structured logs, and xUnit unit/integration tests.
 
-Not yet implemented: authentication, workspace/project/task HTTP CRUD, Kanban, real-time updates, uploads, or cloud deployment. This starter is for local development and must not be exposed as a production service.
+Implemented locally in Phase 4: Cognito PKCE sign-in integration, protected routes, verified profile bootstrap and database-backed resource authorization. Follow [Phase 4 setup](docs/phase-4.md) to create your user pool and verify real login.
+
+Not yet implemented: workspace/project/task HTTP CRUD, Kanban, real-time updates, uploads, or cloud deployment. This starter is for local development and must not be exposed as a production service.
 
 ## Start here
+
+**For authentication, start with [the Cognito setup guide](docs/phase-4.md).** Account, Projects and My tasks now require sign-in; the overview and connection checks remain public.
 
 1. Read [development setup](docs/development.md).
 2. Review [architecture](docs/architecture.md) and [data model](docs/data-model.md).

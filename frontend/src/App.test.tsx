@@ -5,9 +5,13 @@ import { MemoryRouter } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App'
 import { createQueryClient } from './lib/queryClient'
+import { AuthContext } from './features/auth/AuthContext'
+import { User } from 'oidc-client-ts'
 
 function renderApp(path = '/') {
-  return render(<QueryClientProvider client={createQueryClient()}><MemoryRouter initialEntries={[path]}><App /></MemoryRouter></QueryClientProvider>)
+  const user = new User({ access_token: 'test-only', token_type: 'Bearer', profile: { sub: 'test-user', iss: 'test', aud: 'test', exp: 9999999999, iat: 0 } })
+  const auth = { user, loading: false, configured: true, error: null, signIn: vi.fn(), signOut: vi.fn(), completeSignIn: vi.fn() }
+  return render(<QueryClientProvider client={createQueryClient()}><AuthContext.Provider value={auth}><MemoryRouter initialEntries={[path]}><App /></MemoryRouter></AuthContext.Provider></QueryClientProvider>)
 }
 
 describe('workspace navigation', () => {
