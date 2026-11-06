@@ -4,6 +4,7 @@
     <Project Path="src/DevFlow.Application/DevFlow.Application.csproj" />
     <Project Path="src/DevFlow.Domain/DevFlow.Domain.csproj" />
     <Project Path="src/DevFlow.Infrastructure/DevFlow.Infrastructure.csproj" />
+    <Project Path="src/DevFlow.Migrator/DevFlow.Migrator.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/DevFlow.IntegrationTests/DevFlow.IntegrationTests.csproj" />

@@ -2,7 +2,7 @@
 
 A cloud-based project management platform built incrementally as a software engineering portfolio project.
 
-**Current milestone: Phase 7 ? S3 attachments (complete; local checks and user-confirmed live AWS walkthrough passed).**
+**Current milestone: Phase 8 complete within revised scope: local container verified; paid AWS hosting deferred.**
 
 Implemented: responsive React/TypeScript shell, Tailwind styling, React Router, TanStack Query, API/database connection checks, Vitest/React Testing Library tests, layered ASP.NET Core backend, PostgreSQL/EF Core persistence, initial core-schema migration, liveness/readiness endpoints, development OpenAPI, safe Problem Details responses, structured logs, and xUnit unit/integration tests.
 
@@ -12,9 +12,9 @@ Phase 5 adds workspace/project/task CRUD, team invitations, roles, comments, act
 
 Phase 6 adds a drag-and-drop Kanban board, persisted ordering, conflict handling and authorized SignalR updates. See [Phase 6 setup and walkthrough](docs/phase-6.md).
 
-Phase 7 adds private S3 uploads, metadata/checksum verification, authorized downloads and abandoned-upload cleanup. Start with [the step-by-step AWS setup guide](docs/phase-7.md). Phases 5 and 6 were committed together as `ec1f54f`.
+Phase 7 adds private S3 uploads, metadata/checksum verification, authorized downloads and abandoned-upload cleanup. Start with [the step-by-step AWS setup guide](docs/phase-7.md). Phases 5 and 6 were committed together as `ec1f54f`; Phase 7 was committed as `272644e`. See [Phase 8](docs/phase-8.md) for the container build and deployment plan.
 
-Not yet implemented: cloud deployment. This starter is for local development and must not be exposed as a production service.
+Hosting: React, the API and PostgreSQL run locally. AWS Cognito and S3 integrations have been live-tested. ECS/RDS/CloudFront deployment definitions are prepared but have not been deployed; cloud mutation stages are disabled by default. Existing AWS integrations are not a guarantee of zero AWS charges.
 
 ## Start here
 

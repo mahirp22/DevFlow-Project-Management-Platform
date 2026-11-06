@@ -1,0 +1,11 @@
+{
+  "AllowCloudDeployment": false,
+  "AccountId": "383354018220",
+  "Region": "ca-central-1",
+  "Profile": "devflow-deploy",
+  "StackName": "devflow-demo",
+  "AttachmentBucket": "devflow-attachments-mahir-2026",
+  "UserPoolId": "ca-central-1_Et5igvtDU",
+  "ClientId": "549igavg7oft86rrp8dp5pol53",
+  "CognitoDomain": "https://ca-central-1et5igvtdu.auth.ca-central-1.amazoncognito.com"
+}

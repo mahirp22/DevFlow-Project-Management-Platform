@@ -1,0 +1,17 @@
+# Allowlist: keep local credentials, frontend files and tooling out of the build context.
+**
+!global.json
+!NuGet.Config
+!backend/
+!backend/**
+backend/**/bin/
+backend/**/obj/
+backend/**/TestResults/
+backend/tests/
+backend/**/.env*
+backend/**/appsettings.*.json
+backend/**/*.pfx
+backend/**/*.pem
+backend/**/*.key
+backend/**/*.user
+backend/**/*.log

@@ -16,9 +16,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DevFlow");
-        if (string.IsNullOrWhiteSpace(connectionString))
-            throw new InvalidOperationException("Configure ConnectionStrings:DevFlow using User Secrets or an environment variable.");
+        var connectionString = DatabaseConnection.Resolve(configuration);
 
         services.AddDbContext<DevFlowDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IUserProfiles, UserProfiles>();
