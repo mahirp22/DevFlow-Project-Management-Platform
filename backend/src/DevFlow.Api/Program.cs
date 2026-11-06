@@ -39,6 +39,7 @@ builder.Services.AddCognitoAuthentication(builder.Configuration, builder.Environ
 builder.Services.AddHttpClient<IIdentityDirectory, CognitoIdentityDirectory>(client =>
     client.Timeout = TimeSpan.FromSeconds(10))
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
+builder.Services.AddHostedService<DevFlow.Api.Attachments.AttachmentCleanup>();
 builder.Services.AddHealthChecks().AddCheck<PostgreSqlReadinessCheck>("postgresql", tags: ["ready"]);
 
 var app = builder.Build();

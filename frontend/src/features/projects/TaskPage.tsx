@@ -1,3 +1,4 @@
+import { AttachmentPanel } from './AttachmentPanel'
 import { useProjectLive } from './useProjectLive'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -48,6 +49,7 @@ export function TaskPage() {
           {activities.data && <Pager page={activityPage} total={activities.data.total} pageSize={25} onChange={setActivityPage} />}
         </section>
       </div>
+      <AttachmentPanel key={taskId} path={path + "/attachments"} canWrite={Boolean(canWrite)} />
       {canWrite && <div className="mt-6">{!confirming ? <button className="button-danger" onClick={() => setConfirming(true)}>Delete task</button> :
         <div className="flex gap-3"><button className="button-danger" disabled={write.isPending} onClick={async () => {
           try { await write.mutateAsync({ path: path + '?version=' + query.data!.version, method: 'DELETE' }); void navigate(projectUrl(workspaceId, projectId)) } catch { /* shown above */ }

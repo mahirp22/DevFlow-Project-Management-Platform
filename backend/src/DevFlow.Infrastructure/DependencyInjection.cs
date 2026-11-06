@@ -1,3 +1,7 @@
+using Amazon;
+using Amazon.S3;
+using DevFlow.Application.Attachments;
+using DevFlow.Infrastructure.Attachments;
 using DevFlow.Infrastructure.Persistence;
 using DevFlow.Application.Identity;
 using DevFlow.Infrastructure.Identity;
@@ -25,6 +29,20 @@ public static class DependencyInjection
         services.AddScoped<ITaskService, TaskService>();
         services.AddScoped<IBoardService, BoardService>();
         services.AddScoped<IInvitationService, InvitationService>();
+        var attachments = new AttachmentSettings { BucketName = configuration["Attachments:BucketName"] ?? "", Region = configuration["Attachments:Region"] ?? "" };
+        attachments.Validate();
+        services.AddSingleton(attachments);
+        if (attachments.Configured)
+        {
+            services.AddSingleton<IAmazonS3>(_ =>
+            {
+                try { return new AmazonS3Client(new AmazonS3Config { RegionEndpoint = RegionEndpoint.GetBySystemName(attachments.Region), Timeout = TimeSpan.FromSeconds(5), MaxErrorRetry = 1 }); }
+                catch (Exception) { throw new AttachmentStorageUnavailableException(); }
+            });
+            services.AddSingleton<IAttachmentStorage, S3AttachmentStorage>();
+        }
+        else services.AddSingleton<IAttachmentStorage, DisabledAttachmentStorage>();
+        services.AddScoped<IAttachmentService, AttachmentService>();
         return services;
     }
 }

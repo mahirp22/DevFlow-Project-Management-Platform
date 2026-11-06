@@ -12,6 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="4.0.104.10" />
+    <PackageReference Include="AWSSDK.Signin" Version="4.0.102.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.14" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />

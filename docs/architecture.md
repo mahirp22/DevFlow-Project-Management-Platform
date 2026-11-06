@@ -57,3 +57,7 @@ EF Core migrations live in Infrastructure. No browser connects to PostgreSQL. Lo
 ## Phase 5 use cases
 
 Application/Projects defines validated requests, response DTOs and use-case interfaces. Infrastructure/Projects implements permission-checked EF Core queries and transactions. Thin API controllers supply the authenticated subject. The React projects feature owns forms, runtime response parsing and TanStack Query invalidation. Tasks use xmin for stale-write detection; row locks protect numbering and invitation acceptance. See [Phase 5](phase-5.md) for the concrete routes, deletion model and tests.
+
+## Phase 7 attachments
+
+The storage interface isolates S3 signing/metadata/deletion from task authorization and persistence. Direct browser POST uploads have exact size, type and checksum conditions. Finalization checks S3 metadata; only ready records can issue a 60-second download grant. Dedicated unversioned SSE-S3 storage is required for this milestone. An hourly bounded worker cleans abandoned uploads and retains tombstones for retries. See [Phase 7](phase-7.md) for IAM, CORS, login, limits and live setup.

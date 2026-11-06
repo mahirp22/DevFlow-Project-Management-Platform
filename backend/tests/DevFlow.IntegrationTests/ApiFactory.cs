@@ -1,3 +1,4 @@
+using DevFlow.Application.Attachments;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +9,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols;
 namespace DevFlow.IntegrationTests;
 
-internal sealed class ApiFactory(string connectionString, string environment = "Development") : WebApplicationFactory<Program>
+internal sealed class ApiFactory(string connectionString, string environment = "Development", IAttachmentStorage? attachments = null) : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -30,6 +31,7 @@ internal sealed class ApiFactory(string connectionString, string environment = "
                 options.ConfigurationManager = new StaticConfigurationManager<OpenIdConnectConfiguration>(configuration);
             });
             services.AddScoped<IIdentityDirectory, TestIdentityDirectory>();
+            if (attachments is not null) services.AddSingleton(attachments);
         });
     }
 }

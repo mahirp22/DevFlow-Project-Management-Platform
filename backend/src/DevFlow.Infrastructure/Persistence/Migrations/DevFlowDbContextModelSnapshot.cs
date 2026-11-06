@@ -182,6 +182,70 @@ namespace DevFlow.Infrastructure.Persistence.Migrations
                     b.ToTable("TaskActivities", (string)null);
                 });
 
+            modelBuilder.Entity("DevFlow.Domain.Entities.TaskAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Checksum")
+                        .IsRequired()
+                        .HasMaxLength(44)
+                        .HasColumnType("character varying(44)");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(180)
+                        .HasColumnType("character varying(180)");
+
+                    b.Property<DateTimeOffset?>("FinalizedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("LastCleanedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ObjectKey")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UploaderUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ObjectKey")
+                        .IsUnique();
+
+                    b.HasIndex("UploaderUserId");
+
+                    b.HasIndex("TaskId", "CreatedAt");
+
+                    b.HasIndex("FinalizedAt", "ExpiresAt", "LastCleanedAt");
+
+                    b.ToTable("TaskAttachments", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_TaskAttachments_Size", "\"Size\" BETWEEN 1 AND 10485760");
+                        });
+                });
+
             modelBuilder.Entity("DevFlow.Domain.Entities.TaskComment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -425,6 +489,21 @@ namespace DevFlow.Infrastructure.Persistence.Migrations
                     b.HasOne("DevFlow.Domain.Entities.TaskItem", null)
                         .WithMany()
                         .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DevFlow.Domain.Entities.TaskAttachment", b =>
+                {
+                    b.HasOne("DevFlow.Domain.Entities.TaskItem", null)
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DevFlow.Domain.Entities.UserProfile", null)
+                        .WithMany()
+                        .HasForeignKey("UploaderUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

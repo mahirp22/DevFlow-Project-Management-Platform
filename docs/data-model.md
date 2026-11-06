@@ -1,6 +1,6 @@
 # Data model
 
-Phase 2 implements UserProfile, Workspace, WorkspaceMembership, Project, ProjectMembership and TaskItem in the initial migration. Phase 5 adds invitations, comments and activity; attachments remain planned for Phase 7. Read [Phase 2](phase-2.md) for mapping details and deliberate limitations.
+Phase 2 implements UserProfile, Workspace, WorkspaceMembership, Project, ProjectMembership and TaskItem in the initial migration. Phase 5 adds invitations, comments and activity; Phase 7 adds TaskAttachment with uploader, generated S3 key, filename/type, byte length, SHA-256 checksum, upload expiry, finalization and cleanup timestamps. Read [Phase 2](phase-2.md) for mapping details and deliberate limitations.
 
 Workspace is the tenant boundary. Each project belongs to one workspace; each task belongs to one project. The initial product allows one optional assignee per task.
 
@@ -14,7 +14,7 @@ Workspace is the tenant boundary. Each project belongs to one workspace; each ta
 | ProjectInvitation | Project, email, role, token hash, expiry, inviter, accepted/revoked state |
 | TaskItem | UUID, project, project-local number, title, description, status, priority, due date, assignee, reporter, position, concurrency token |
 | TaskComment | Task, author, body, creation timestamp |
-| TaskAttachment | Task, uploader, object key, filename, byte count, media type, pending/finalized state |
+| TaskAttachment | Task, uploader, object key, filename, byte count, media type, SHA-256, expiry, finalized/cleanup timestamps |
 | TaskActivity | Task, actor, human-readable change summary, creation timestamp |
 
 Task statuses: ToDo, InProgress, InReview, Completed. Backward moves are allowed. Initial priorities: Low, Medium, High, Urgent. Use TaskItem in C# to avoid confusion with System.Threading.Tasks.Task.

@@ -1,3 +1,4 @@
+using DevFlow.Application.Attachments;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ public sealed class ApiExceptionHandler(IProblemDetailsService problems, ILogger
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
         var conflict = exception is DbUpdateConcurrencyException;
-        var unavailable = exception is IdentityProviderUnavailableException;
+        var unavailable = exception is IdentityProviderUnavailableException or AttachmentStorageUnavailableException;
         var request = exception as RequestFailure;
         var duplicate = exception is DbUpdateException { InnerException: PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } };
         var constraint = exception is DbUpdateException { InnerException: PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } };
@@ -24,7 +25,7 @@ public sealed class ApiExceptionHandler(IProblemDetailsService problems, ILogger
         var problem = new ProblemDetails
         {
             Status = status,
-            Title = request?.Message ?? (duplicate ? "This value already exists. Project keys must be unique within a workspace."
+            Title = request?.Message ?? (exception is AttachmentStorageUnavailableException ? "Attachment storage is unavailable. Check the S3 setup and AWS login." : duplicate ? "This value already exists. Project keys must be unique within a workspace."
                 : constraint ? "Related data changed. Reload and try again."
                 : unavailable ? "Sign-in services are temporarily unavailable."
                 : conflict ? "The resource was modified by another request." : "An unexpected error occurred."),

@@ -4,6 +4,7 @@ namespace DevFlow.Infrastructure.Persistence;
 
 public sealed class DevFlowDbContext(DbContextOptions<DevFlowDbContext> options) : DbContext(options)
 {
+    public DbSet<TaskAttachment> Attachments => Set<TaskAttachment>();
     public DbSet<UserProfile> Users => Set<UserProfile>();
     public DbSet<Workspace> Workspaces => Set<Workspace>();
     public DbSet<WorkspaceMembership> WorkspaceMemberships => Set<WorkspaceMembership>();
