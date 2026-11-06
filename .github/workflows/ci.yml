@@ -1,0 +1,86 @@
+name: DevFlow CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Public repositories use free standard hosted runners. Private/internal repositories
+# skip every job; run scripts/Verify.ps1 locally instead. No AWS calls or credentials.
+# Caches/artifact uploads are intentionally omitted to avoid hosted storage charges.
+jobs:
+  frontend:
+    if: github.event.repository.visibility == 'public'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install locked frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Lint, test and build frontend
+        working-directory: frontend
+        run: |
+          npm run lint
+          npm audit --audit-level=high
+          npm test -- --pool=threads --maxWorkers=2
+          npm run build
+      - name: Check infrastructure and disabled deployment stages
+        run: |
+          node --test infrastructure/aws/template.test.mjs
+          pwsh -NoProfile -File scripts/Test-DeploymentScripts.ps1
+
+  backend:
+    if: github.event.repository.visibility == 'public'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      TESTINGPLATFORM_TELEMETRY_OPTOUT: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: global.json
+      - name: Restore locked backend dependencies and build
+        run: |
+          dotnet restore backend/DevFlow.slnx --locked-mode -p:NuGetAudit=true -p:NuGetAuditMode=all -p:NuGetAuditLevel=high
+          dotnet build backend/DevFlow.slnx --configuration Release --no-restore
+      - name: Unit tests
+        run: dotnet backend/tests/DevFlow.UnitTests/bin/Release/net10.0/DevFlow.UnitTests.dll
+      - name: Integration tests against disposable PostgreSQL
+        run: dotnet backend/tests/DevFlow.IntegrationTests/bin/Release/net10.0/DevFlow.IntegrationTests.dll
+
+  container:
+    if: github.event.repository.visibility == 'public'
+    needs: [frontend, backend]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build image from the tested commit
+        run: docker build --platform linux/amd64 -f backend/Dockerfile -t devflow-api:ci .
+      - name: Reject root runtime image
+        run: |
+          user=$(docker image inspect devflow-api:ci --format '{{.Config.User}}')
+          case "$user" in ''|0|root|0:*|root:*) echo 'Container must run as a non-root user'; exit 1;; esac
+      - name: Test migrations and Production API container
+        run: pwsh -NoProfile -File scripts/Test-Container.ps1 -Image devflow-api:ci

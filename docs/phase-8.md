@@ -1,6 +1,6 @@
 # Phase 8 closeout: local containers and AWS deployment preparation
 
-Status on November 6, 2026: complete within the revised scope. The user requested no paid hosting and stopped after preparing the deployment plan, before Apply. ECS Fargate, RDS, ALB and CloudFront rollout is deferred, not completed. Phase 8 changes remain uncommitted; Phase 9 requires separate approval.
+Status on November 6, 2026: complete within the revised scope. The user requested no paid hosting and stopped after preparing the deployment plan, before Apply. ECS Fargate, RDS, ALB and CloudFront rollout is deferred, not completed. Phase 8 was committed as `98ad466`; Phase 9 was subsequently authorized.
 
 ## What was completed
 
