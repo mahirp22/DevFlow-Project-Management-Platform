@@ -13,6 +13,7 @@ public sealed class ProjectMembership
         Role = DomainGuard.DefinedEnum(role, nameof(role));
     }
     public Guid WorkspaceId { get; private set; }
+    public void ChangeRole(ProjectRole role) => Role = DomainGuard.DefinedEnum(role, nameof(role));
     public Guid ProjectId { get; private set; }
     public Guid UserId { get; private set; }
     public ProjectRole Role { get; private set; }

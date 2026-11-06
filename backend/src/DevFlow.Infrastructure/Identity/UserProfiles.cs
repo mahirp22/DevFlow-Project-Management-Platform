@@ -11,6 +11,15 @@ public sealed class UserProfiles(DevFlowDbContext db) : IUserProfiles
             .Select(x => new ProfileResponse(x.Id, x.DisplayName, x.Email))
             .SingleOrDefaultAsync(cancellationToken);
 
+    public async Task<ProfileResponse?> RenameAsync(string subject, string displayName, CancellationToken cancellationToken)
+    {
+        var user = await db.Users.SingleOrDefaultAsync(x => x.CognitoSubject == subject, cancellationToken);
+        if (user is null) return null;
+        user.Rename(displayName);
+        await db.SaveChangesAsync(cancellationToken);
+        return new(user.Id, user.DisplayName, user.Email);
+    }
+
     public async Task<ProfileResponse> EnsureAsync(VerifiedIdentity identity, CancellationToken cancellationToken)
     {
         // Parameters are interpolated by EF, never concatenated into SQL.

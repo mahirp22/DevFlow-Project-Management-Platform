@@ -10,6 +10,9 @@ public sealed class DevFlowDbContext(DbContextOptions<DevFlowDbContext> options)
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<ProjectMembership> ProjectMemberships => Set<ProjectMembership>();
     public DbSet<TaskItem> Tasks => Set<TaskItem>();
+    public DbSet<TaskComment> Comments => Set<TaskComment>();
+    public DbSet<TaskActivity> Activities => Set<TaskActivity>();
+    public DbSet<ProjectInvitation> Invitations => Set<ProjectInvitation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

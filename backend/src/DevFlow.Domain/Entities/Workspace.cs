@@ -10,6 +10,7 @@ public sealed class Workspace
         CreatedByUserId = DomainGuard.RequiredId(createdByUserId, nameof(createdByUserId));
     }
     public Guid Id { get; private set; } = Guid.NewGuid();
+    public void Rename(string name) => Name = DomainGuard.RequiredText(name, 100, nameof(name));
     public string Name { get; private set; } = string.Empty;
     public Guid CreatedByUserId { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; } = DateTimeOffset.UtcNow;

@@ -42,7 +42,7 @@ React renders UI; strict TypeScript checks source contracts. Runtime responses s
 
 ## Real-time and consistency
 
-REST persists mutations; SignalR notifies authorized project groups after commit. Reconnects refetch authoritative state. Optimistic moves roll back on error; concurrency tokens prevent silent overwrites. Best-effort notifications can be missed between commit and broadcast, so reconnect/refocus refetch is essential. An outbox is a future option if durable event delivery becomes necessary.
+REST persists mutations; SignalR notifies authorized project subscriptions after commit. Phase 6 uses a per-connection registry and rechecks database access before notification; it does not rely on potentially stale group membership. Reconnects refetch authoritative state. See [Phase 6](phase-6.md) for bounded ordering, revision checks, draft preservation and single-instance delivery limitations. Optimistic moves roll back on error; concurrency tokens prevent silent overwrites. Best-effort notifications can be missed between commit and broadcast, so reconnect/refocus refetch is essential. An outbox is a future option if durable event delivery becomes necessary.
 
 Start with one ECS task. Multiple replicas require a shared SignalR backplane and connection affinity as appropriate to transport configuration. Do not claim horizontal real-time scaling without implementing that infrastructure.
 
@@ -53,3 +53,7 @@ API authorizes an upload, creates a pending record and issues a short-lived pres
 ## Database and deployment
 
 EF Core migrations live in Infrastructure. No browser connects to PostgreSQL. Local PostgreSQL runs in Docker starting in Phase 2; RDS runs privately in AWS. Migrations execute as an explicit deployment step, not independently on every API replica. GitHub Actions will use OIDC for AWS access rather than long-lived access keys.
+
+## Phase 5 use cases
+
+Application/Projects defines validated requests, response DTOs and use-case interfaces. Infrastructure/Projects implements permission-checked EF Core queries and transactions. Thin API controllers supply the authenticated subject. The React projects feature owns forms, runtime response parsing and TanStack Query invalidation. Tasks use xmin for stale-write detection; row locks protect numbering and invitation acceptance. See [Phase 5](phase-5.md) for the concrete routes, deletion model and tests.

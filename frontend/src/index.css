@@ -74,3 +74,41 @@
   .skip-link { @apply fixed -top-20 left-4 z-50 rounded bg-teal-900 p-3 text-white focus:top-4; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+
+@layer components {
+  .field { @apply mb-4 flex min-w-0 flex-col gap-2 text-sm; }
+  .field > span { @apply font-medium text-slate-600; }
+  .field input, .field select, .field textarea { @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-800; }
+  .editor-card { @apply rounded-xl border border-slate-200 bg-white p-6; }
+  .editor-card summary { @apply cursor-pointer font-semibold text-teal-800; }
+  .workspace-toolbar { @apply mb-6 flex flex-wrap items-center gap-5 rounded-xl border border-slate-200 bg-white p-5; }
+  .workspace-toolbar .field { @apply mb-0 min-w-52 flex-1; }
+  .filter-bar { @apply mb-5 flex flex-wrap items-end gap-4 rounded-xl border border-slate-200 bg-white p-4; }
+  .filter-bar .field { @apply mb-0 min-w-36 flex-1; }
+  .filter-bar .field:first-child { @apply min-w-52; }
+  .task-list { @apply overflow-hidden rounded-xl border border-slate-200 bg-white; }
+  .task-row { @apply flex flex-wrap items-center gap-4 border-b border-slate-100 p-5 transition-colors last:border-0 hover:bg-teal-50/50; }
+  .status-badge { @apply whitespace-nowrap rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600; }
+  .status-InProgress { @apply bg-blue-50 text-blue-800; }
+  .status-InReview { @apply bg-amber-50 text-amber-900; }
+  .status-Completed { @apply bg-teal-50 text-teal-800; }
+  .member-row { @apply flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 py-4 text-sm; }
+  .member-row p { @apply mt-1 break-all text-xs text-slate-500; }
+  .member-row .field { @apply mb-0; }
+  .project-tabs { @apply mb-6 flex gap-2 overflow-x-auto border-b border-slate-200; }
+  .project-tabs button { @apply whitespace-nowrap border-b-2 border-transparent px-5 py-3 text-sm font-medium text-slate-500; }
+  .project-tabs button.selected { @apply border-teal-700 text-teal-800; }
+  .button-danger { @apply rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50; }
+  .discussion-item { @apply border-b border-slate-100 py-4 text-sm; }
+  .discussion-item time { @apply mt-1 block text-xs text-slate-500; }
+  .discussion-item p { @apply mt-3 whitespace-pre-wrap break-words leading-6; }
+}
+
+@layer components {
+  .kanban-board { @apply grid grid-cols-1 items-start gap-4 md:grid-cols-2 2xl:grid-cols-4; }
+  .kanban-column { @apply min-w-0 rounded-xl border border-slate-200 bg-slate-100/70 p-3; }
+  .board-card { @apply rounded-xl border border-slate-200 bg-white p-4 shadow-sm; }
+  .board-drop { @apply my-2 min-h-7 rounded-md border border-dashed border-transparent px-2 py-1 text-center text-[10px] text-slate-400; }
+  .board-drop-active { @apply border-teal-500 bg-teal-100 text-teal-800; }
+  .drag-handle { @apply cursor-grab rounded px-2 py-1 text-lg text-slate-500 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-teal-600; touch-action: none; }
+}

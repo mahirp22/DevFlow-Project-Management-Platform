@@ -10,6 +10,7 @@ public sealed class UserProfile
         DisplayName = DomainGuard.RequiredText(displayName, 100, nameof(displayName));
         Email = DomainGuard.RequiredText(email, 320, nameof(email));
     }
+    public void Rename(string displayName) => DisplayName = DomainGuard.RequiredText(displayName, 100, nameof(displayName));
     public Guid Id { get; private set; } = Guid.NewGuid();
     public string CognitoSubject { get; private set; } = string.Empty;
     public string DisplayName { get; private set; } = string.Empty;

@@ -12,6 +12,7 @@ public sealed class WorkspaceMembership
         Role = DomainGuard.DefinedEnum(role, nameof(role));
     }
     public Guid WorkspaceId { get; private set; }
+    public void ChangeRole(WorkspaceRole role) => Role = DomainGuard.DefinedEnum(role, nameof(role));
     public Guid UserId { get; private set; }
     public WorkspaceRole Role { get; private set; }
     public DateTimeOffset JoinedAt { get; private set; } = DateTimeOffset.UtcNow;

@@ -1,6 +1,6 @@
 # Data model
 
-Phase 2 implements UserProfile, Workspace, WorkspaceMembership, Project, ProjectMembership and TaskItem in the initial migration. Invitations, comments, attachments and activity below remain planned for their feature phases. Read [Phase 2](phase-2.md) for mapping details and deliberate limitations.
+Phase 2 implements UserProfile, Workspace, WorkspaceMembership, Project, ProjectMembership and TaskItem in the initial migration. Phase 5 adds invitations, comments and activity; attachments remain planned for Phase 7. Read [Phase 2](phase-2.md) for mapping details and deliberate limitations.
 
 Workspace is the tenant boundary. Each project belongs to one workspace; each task belongs to one project. The initial product allows one optional assignee per task.
 
@@ -13,9 +13,9 @@ Workspace is the tenant boundary. Each project belongs to one workspace; each ta
 | ProjectMembership | Project + user unique pair; Manager / Member / Viewer |
 | ProjectInvitation | Project, email, role, token hash, expiry, inviter, accepted/revoked state |
 | TaskItem | UUID, project, project-local number, title, description, status, priority, due date, assignee, reporter, position, concurrency token |
-| TaskComment | Task, author, body, timestamps |
+| TaskComment | Task, author, body, creation timestamp |
 | TaskAttachment | Task, uploader, object key, filename, byte count, media type, pending/finalized state |
-| TaskActivity | Task, actor, event type, relevant before/after values, timestamp |
+| TaskActivity | Task, actor, human-readable change summary, creation timestamp |
 
 Task statuses: ToDo, InProgress, InReview, Completed. Backward moves are allowed. Initial priorities: Low, Medium, High, Urgent. Use TaskItem in C# to avoid confusion with System.Threading.Tasks.Task.
 
@@ -30,8 +30,8 @@ Task statuses: ToDo, InProgress, InReview, Completed. Backward moves are allowed
 - Store only hashed invitation tokens; enforce expiry, single acceptance and verified intended recipient.
 - Define archive, deletion and historical actor retention behavior before creating cascade rules.
 
-Indexes will target project/status, project/assignee, due date, and task/activity time. Board ordering is persisted within columns; moves update ordering atomically and validate a concurrency version. We will choose a simple ordering strategy in Phase 6 based on measured needs.
+Indexes will target project/status, project/assignee, due date, and task/activity time. Board ordering is persisted within columns; moves update ordering atomically and validate a concurrency version. Phase 6 renumbers the destination column within a transaction and bounds boards to 500 active tasks.
 
-Analytics initially query tasks/activity for status counts, overdue tasks, workload and completion trends. No analytics table is required in Phase 1. Invitation links can initially be shared manually; automated email requires a separately chosen delivery service.
+Phase 5 analytics queries current tasks for status counts, overdue tasks and open workload. Historical completion trends are not implemented. No analytics table is required in Phase 1. Invitation links can initially be shared manually; automated email requires a separately chosen delivery service.
 
-The implemented schema enforces workspace/project membership consistency with composite foreign keys, optional task assignees through project membership, unique project keys within workspaces, unique task numbers within projects, allowed enum values, and restrictive deletion. Task Version maps to PostgreSQL xmin. Application authorization, preserving the last owner, updating UpdatedAt, task-number allocation and board ordering are still future use-case responsibilities.
+The implemented schema enforces workspace/project membership consistency with composite foreign keys, optional task assignees through project membership, unique project keys within workspaces, unique task numbers within projects, allowed enum values, and restrictive deletion. Task Version maps to PostgreSQL xmin. Phase 5 implements application authorization, last-owner preservation, UpdatedAt updates and transactional task-number allocation. Project and task soft deletion preserve history; deleted tasks clear their assignee. Project.NextTaskNumber is initialized from existing task numbers in the Phase 5 migration. Phase 6 implements ordering using the existing Position column, project-row locking, stable task-number tie breaking, and a revision derived from task IDs/xmin values. No additional migration is required.

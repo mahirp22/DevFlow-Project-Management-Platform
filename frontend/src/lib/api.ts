@@ -17,15 +17,17 @@ export function getJson(path: string, signal?: AbortSignal, token?: string): Pro
   return requestJson(path, { signal, token })
 }
 
-export async function requestJson(path: string, options: { method?: 'GET' | 'POST'; signal?: AbortSignal; token?: string } = {}): Promise<unknown> {
+export async function requestJson(path: string, options: { method?: 'GET' | 'POST' | 'PUT' | 'DELETE'; signal?: AbortSignal; token?: string; body?: unknown } = {}): Promise<unknown> {
   const { signal, token, method = 'GET' } = options
   const timeout = AbortSignal.timeout(8_000)
   const response = await fetch(`${baseUrl}${path}`, {
     method,
-    headers: { Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    headers: { Accept: 'application/json', ...(options.body !== undefined ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: options.body === undefined ? undefined : JSON.stringify(options.body),
     cache: 'no-store',
     signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
   })
+  if (response.status === 204) return undefined
   const body: unknown = await response.json().catch(() => null)
   if (!response.ok) {
     const problem = body !== null && typeof body === 'object' ? body : {}

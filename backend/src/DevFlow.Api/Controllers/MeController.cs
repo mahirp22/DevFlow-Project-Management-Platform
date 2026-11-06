@@ -20,6 +20,16 @@ public sealed class MeController(IUserProfiles profiles, IIdentityDirectory dire
         return profile is null ? NotFound() : Ok(profile);
     }
 
+    [HttpPut]
+    [ProducesResponseType<ProfileResponse>(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<ProfileResponse>> Update(UpdateProfileRequest request, CancellationToken cancellationToken)
+    {
+        var profile = await profiles.RenameAsync(User.FindFirst("sub")!.Value, request.DisplayName, cancellationToken);
+        return profile is null ? NotFound() : Ok(profile);
+    }
+
     [HttpPost]
     [ProducesResponseType<ProfileResponse>(200)]
     [ProducesResponseType(401)]

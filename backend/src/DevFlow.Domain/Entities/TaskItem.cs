@@ -19,6 +19,25 @@ public sealed class TaskItem
         AssigneeUserId = assigneeUserId is { } id ? DomainGuard.RequiredId(id, nameof(assigneeUserId)) : null;
     }
     public Guid Id { get; private set; } = Guid.NewGuid();
+    public bool IsDeleted { get; private set; }
+    public void Update(string title, string? description, TaskStatus status, TaskPriority priority, DateOnly? dueDate, Guid? assignee)
+    {
+        Title = DomainGuard.RequiredText(title, 200, nameof(title));
+        Description = DomainGuard.OptionalText(description, 10000, nameof(description));
+        Status = DomainGuard.DefinedEnum(status, nameof(status));
+        Priority = DomainGuard.DefinedEnum(priority, nameof(priority));
+        DueDate = dueDate;
+        AssigneeUserId = assignee is { } id ? DomainGuard.RequiredId(id, nameof(assignee)) : null;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+    public void Move(TaskStatus status, long position)
+    {
+        if (position < 0) throw new ArgumentOutOfRangeException(nameof(position));
+        Status = DomainGuard.DefinedEnum(status, nameof(status));
+        Position = position;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+    public void Delete() { IsDeleted = true; AssigneeUserId = null; UpdatedAt = DateTimeOffset.UtcNow; }
     public Guid ProjectId { get; private set; }
     public int Number { get; private set; }
     public string Title { get; private set; } = string.Empty;

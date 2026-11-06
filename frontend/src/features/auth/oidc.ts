@@ -40,7 +40,10 @@ export const userManager = configuration ? new UserManager({
 
 export function safeReturnPath(value: unknown): string {
   // Only application routes are accepted, never arbitrary redirect URLs.
-  return typeof value === 'string' && ['/projects', '/tasks', '/account', '/'].includes(value) ? value : '/'
+  if (typeof value !== 'string') return '/'
+  if (['/projects', '/tasks', '/account', '/invitations', '/'].includes(value)) return value
+  const id = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}'
+  return new RegExp('^(/projects/' + id + '/' + id + '(/tasks/' + id + ')?|/workspaces/' + id + ')$').test(value) ? value : '/'
 }
 
 export function cognitoLogoutUrl(domain: string, clientId: string, origin: string) {

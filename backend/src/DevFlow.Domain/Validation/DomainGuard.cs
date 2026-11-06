@@ -2,6 +2,11 @@ namespace DevFlow.Domain.Validation;
 
 internal static class DomainGuard
 {
+    public static string? OptionalText(string? value, int maxLength, string parameter)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+        return RequiredText(value, maxLength, parameter);
+    }
     public static string RequiredText(string value, int maxLength, string parameter)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, parameter);

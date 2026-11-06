@@ -80,10 +80,12 @@ npm run preview previews static build output only; it is not the development pro
 
 appsettings.json contains non-secret defaults; appsettings.Development.json overrides logging. Environment variables use double underscores for nested .NET keys. User Secrets will hold local backend secrets when needed. Frontend VITE_* values are shipped to the browser and must never contain credentials.
 
-The local API uses loopback HTTP with no authentication or sensitive data. Production will terminate HTTPS at the AWS load balancer, restrict backend ingress, configure trusted forwarded headers and hostnames, and use resource authorization. There is no wildcard CORS policy.
+The local API uses loopback HTTP for development and Cognito authentication for protected routes. Production will terminate HTTPS at the AWS load balancer, restrict backend ingress, configure trusted forwarded headers and hostnames, and use resource authorization. There is no wildcard CORS policy.
 
 AWS credentials will use developer profiles locally and IAM task roles in ECS. Database passwords belong in managed secrets. Never commit tokens, private keys, database credentials, or environment files.
 
 ## Tests
 
-Phase 2 includes xUnit domain tests and integration tests against real PostgreSQL, including relational constraints, optimistic concurrency, readiness and HTTP error behavior. See [Phase 2](phase-2.md) for Docker and external-database test commands. Phase 3 includes 11 Vitest/React Testing Library tests. Run npm.cmd test from frontend; see [Phase 3](phase-3.md) for the frontend walkthrough and architecture. Authorization and upload controls receive tests with their features.
+Phase 2 includes xUnit domain tests and integration tests against real PostgreSQL, including relational constraints, optimistic concurrency, readiness and HTTP error behavior. See [Phase 2](phase-2.md) for Docker and external-database test commands. Phase 5 includes 25 Vitest/React Testing Library tests. Run npm.cmd test from frontend; see [Phase 3](phase-3.md) for the frontend walkthrough and architecture. Authorization and upload controls receive tests with their features.
+
+For the current project/task features, restart the updated API and follow [Phase 5](phase-5.md). The guide includes the additive migration and a two-account invitation walkthrough.

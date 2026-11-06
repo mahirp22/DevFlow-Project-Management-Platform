@@ -12,6 +12,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@dnd-kit/react": "0.5.3",
+    "@microsoft/signalr": "10.0.11",
     "@tanstack/react-query": "5.105.3",
     "oidc-client-ts": "3.5.0",
     "react": "19.3.1",

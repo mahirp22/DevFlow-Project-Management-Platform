@@ -2,13 +2,17 @@
 
 A cloud-based project management platform built incrementally as a software engineering portfolio project.
 
-**Current milestone: Phase 4 — authentication and authorization (live setup walkthrough confirmed by the user).**
+**Current milestone: Phase 6 ? Kanban and real-time collaboration (implemented, tested and live walkthrough confirmed).**
 
 Implemented: responsive React/TypeScript shell, Tailwind styling, React Router, TanStack Query, API/database connection checks, Vitest/React Testing Library tests, layered ASP.NET Core backend, PostgreSQL/EF Core persistence, initial core-schema migration, liveness/readiness endpoints, development OpenAPI, safe Problem Details responses, structured logs, and xUnit unit/integration tests.
 
 Implemented locally in Phase 4: Cognito PKCE sign-in integration, protected routes, verified profile bootstrap and database-backed resource authorization. Follow [Phase 4 setup](docs/phase-4.md) to create your user pool and verify real login.
 
-Not yet implemented: workspace/project/task HTTP CRUD, Kanban, real-time updates, uploads, or cloud deployment. This starter is for local development and must not be exposed as a production service.
+Phase 5 adds workspace/project/task CRUD, team invitations, roles, comments, activity history, task filters and analytics. Follow [the Phase 5 guide](docs/phase-5.md) to restart the API and try the workflows.
+
+Phase 6 adds a drag-and-drop Kanban board, persisted ordering, conflict handling and authorized SignalR updates. See [Phase 6 setup and walkthrough](docs/phase-6.md).
+
+Not yet implemented: uploads or cloud deployment. This starter is for local development and must not be exposed as a production service.
 
 ## Start here
 
@@ -43,7 +47,7 @@ npm.cmd ci
 npm.cmd run dev
 ~~~
 
-Open http://127.0.0.1:5173 and open **Connection**, then select **Check api** or **Check database**. The API listens on http://127.0.0.1:5080. The frontend development proxy forwards /api requests without requiring permissive CORS.
+Open http://localhost:5173 and open **Connection**, then select **Check api** or **Check database**. The API listens on http://127.0.0.1:5080. The frontend development proxy forwards /api requests without requiring permissive CORS.
 
 ## Verify
 

@@ -36,6 +36,13 @@ public static class CognitoAuthentication
             };
             options.Events = new JwtBearerEvents
             {
+                OnMessageReceived = context =>
+                {
+                    if (context.Request.Path == "/api/hubs/projects"
+                        && context.Request.Query.TryGetValue("access_token", out var token))
+                        context.Token = token;
+                    return Task.CompletedTask;
+                },
                 OnTokenValidated = context =>
                 {
                     var user = context.Principal!;

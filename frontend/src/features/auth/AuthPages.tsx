@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiError, getJson, requestJson } from '../../lib/api'
 import { useAuth } from './AuthContext'
 
@@ -60,6 +60,7 @@ function parseProfile(body: unknown): Profile {
 
 export function AccountPage() {
   const auth = useAuth()
+  const cache = useQueryClient()
   const token = auth.user?.access_token
   const query = useQuery({
     queryKey: ['profile', auth.user?.profile.sub],
@@ -70,12 +71,30 @@ export function AccountPage() {
     mutationFn: async () => parseProfile(await requestJson('/me', { method: 'POST', token })),
     onSuccess: () => { void query.refetch() },
   })
+  const rename = useMutation({
+    mutationFn: async (displayName: string) => parseProfile(await requestJson('/me', { method: 'PUT', token, body: { displayName } })),
+    onSuccess: async profile => {
+      cache.setQueryData(['profile', auth.user?.profile.sub], profile)
+      await cache.invalidateQueries({ queryKey: ['app-data'] })
+    },
+  })
   const missing = query.error instanceof ApiError && query.error.status === 404
   const unauthorized = query.error instanceof ApiError && query.error.status === 401
   return <section className="connection-card">
     <p className="eyebrow">YOUR ACCOUNT</p><h1>Make yourself at home.</h1>
     {query.isPending && <p role="status">Loading your profile…</p>}
     {query.data && <div className="my-6"><h2>{query.data.displayName}</h2><p>{query.data.email}</p></div>}
+    {query.data && <form className="my-6" onSubmit={event => {
+      event.preventDefault()
+      const displayName = String(new FormData(event.currentTarget).get('displayName') ?? '').trim()
+      rename.mutate(displayName)
+    }}>
+      <label className="field"><span>Display name</span><input key={query.data.id} name="displayName" required maxLength={100} defaultValue={query.data.displayName === 'DevFlow member' ? '' : query.data.displayName} placeholder="Your name" onChange={() => rename.reset()} /></label>
+      <p className="mb-4 text-sm text-slate-600">This name appears in your teams, task assignments and comments.</p>
+      <button className="button-primary" disabled={rename.isPending}>{rename.isPending ? 'Saving?' : 'Save name'}</button>
+      {rename.isSuccess && <p role="status" className="mt-3">Your display name is saved.</p>}
+      {rename.isError && <p role="alert" className="mt-3">{rename.error.message}</p>}
+    </form>}
     {missing && <><p>Finish setting up your DevFlow profile using your verified account details.</p><button className="button-primary mt-5" disabled={initialize.isPending} onClick={() => initialize.mutate()}>{initialize.isPending ? 'Setting up…' : 'Set up my profile'}</button></>}
     {query.isError && !missing && <p role="alert">{unauthorized ? 'Your session is no longer accepted. Sign out and sign in again.' : 'Your profile could not be loaded. Check the API and database connection.'}</p>}
     {initialize.isError && <p role="alert">Profile setup failed. Verify your email and check the connection, then try again.</p>}

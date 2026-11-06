@@ -23,7 +23,7 @@ public sealed class ResourceAccessService(DevFlowDbContext db) : IResourceAccess
         var workspace = await WorkspaceAsync(subject, workspaceId, cancellationToken);
         if (workspace is null) return null;
         // Both identifiers are required: a project from another tenant never matches.
-        if (!await db.Projects.AnyAsync(x => x.Id == projectId && x.WorkspaceId == workspaceId, cancellationToken))
+        if (!await db.Projects.AnyAsync(x => x.Id == projectId && x.WorkspaceId == workspaceId && !x.IsDeleted, cancellationToken))
             return null;
         if (workspace.CanManage) return new ResourceAccess(true, true, true);
 

@@ -17,7 +17,7 @@ export function AppLayout() {
   const main = useRef<HTMLElement>(null)
   useEffect(() => {
     const title = navigation.find(item => item.to === location.pathname)?.label
-      ?? (location.pathname === '/sign-in' ? 'Sign in' : location.pathname === '/auth/callback' ? 'Signing in' : 'Page not found')
+      ?? (location.pathname.startsWith('/projects/') ? 'Project' : location.pathname.startsWith('/workspaces/') ? 'Workspace settings' : location.pathname === '/invitations' ? 'Join your team' : location.pathname === '/sign-in' ? 'Sign in' : location.pathname === '/auth/callback' ? 'Signing in' : 'Page not found')
     document.title = `${title} · DevFlow`
     main.current?.focus()
   }, [location.pathname])
@@ -31,7 +31,7 @@ export function AppLayout() {
         <div className="workspace"><span className="workspace-avatar">W</span><div><strong>Your workspace</strong><small>Getting started</small></div></div>
         <p className="nav-caption">WORKSPACE</p>
         <nav id="workspace-nav" aria-label="Workspace">
-          {navigation.map(item => <NavLink key={item.to} to={item.to} end onClick={() => setMenuOpen(false)} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}><span aria-hidden="true">{item.symbol}</span>{item.label}</NavLink>)}
+          {navigation.map(item => <NavLink key={item.to} to={item.to} end={item.to === '/'} onClick={() => setMenuOpen(false)} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}><span aria-hidden="true">{item.symbol}</span>{item.label}</NavLink>)}
         </nav>
         <div className="sidebar-note"><span className="status-dot" />A little clarity. A lot of progress.<p>A shared space for your team's next great idea.</p></div>
       </div>

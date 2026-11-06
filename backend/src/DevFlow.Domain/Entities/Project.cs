@@ -14,6 +14,16 @@ public sealed class Project
         Name = DomainGuard.RequiredText(name, 100, nameof(name));
     }
     public Guid Id { get; private set; } = Guid.NewGuid();
+    public bool IsDeleted { get; private set; }
+    public int NextTaskNumber { get; private set; } = 1;
+    public int AllocateTaskNumber() => NextTaskNumber++;
+    public void Update(string name, string? description, bool archived)
+    {
+        Name = DomainGuard.RequiredText(name, 100, nameof(name));
+        Description = DomainGuard.OptionalText(description, 4000, nameof(description));
+        IsArchived = archived;
+    }
+    public void Delete() => IsDeleted = true;
     public Guid WorkspaceId { get; private set; }
     public string Key { get; private set; } = string.Empty;
     public string Name { get; private set; } = string.Empty;

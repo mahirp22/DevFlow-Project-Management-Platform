@@ -76,3 +76,18 @@ describe('Cognito public configuration', () => {
     expect(url.searchParams.get('client_id')).toBe('public-client')
   })
 })
+
+ it('lets an existing member replace the fallback name and sends only their display name', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(Response.json({ id: '123', displayName: 'DevFlow member', email: 'member@example.invalid' }))
+      .mockResolvedValueOnce(Response.json({ id: '123', displayName: 'Alex Chen', email: 'member@example.invalid' }))
+    vi.stubGlobal('fetch', fetchMock)
+    const user = new User({ access_token: 'test-only-access', token_type: 'Bearer', profile: { sub: '123', iss: 'test', aud: 'test', exp: 9999999999, iat: 0 } })
+    renderAuth('/account', { configured: true, user })
+    const name = await screen.findByLabelText('Display name')
+    expect(name).toHaveValue('')
+    await userEvent.type(name, 'Alex Chen')
+    await userEvent.click(screen.getByRole('button', { name: 'Save name' }))
+    expect(await screen.findByRole('status')).toHaveTextContent('Your display name is saved.')
+    expect(screen.getByRole('heading', { name: 'Alex Chen' })).toBeInTheDocument()
+    expect(fetchMock).toHaveBeenLastCalledWith('/api/me', expect.objectContaining({ method: 'PUT', body: JSON.stringify({ displayName: 'Alex Chen' }) }))
+  })

@@ -1,3 +1,4 @@
+using DevFlow.Api.Collaboration;
 using DevFlow.Api.ErrorHandling;
 using DevFlow.Api.Health;
 using DevFlow.Api.Authentication;
@@ -9,7 +10,14 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddJsonConsole();
-builder.Services.AddControllers();
+// Browser WebSocket authentication uses a query token; suppress request URL logging.
+builder.Logging.AddFilter("Microsoft.AspNetCore.Hosting.Diagnostics", LogLevel.Warning);
+builder.Services.AddSingleton<ProjectConnections>();
+builder.Services.AddScoped<ProjectNotifications>();
+builder.Services.AddScoped<ProjectNotificationFilter>();
+builder.Services.AddSignalR(options => { options.MaximumReceiveMessageSize = 4096; options.EnableDetailedErrors = false; });
+builder.Services.AddControllers(options => options.Filters.AddService<ProjectNotificationFilter>()).AddJsonOptions(options =>
+    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter(allowIntegerValues: false)));
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
@@ -40,6 +48,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 if (app.Environment.IsDevelopment()) app.MapOpenApi().AllowAnonymous();
 app.MapControllers();
+app.MapHub<ProjectHub>("/api/hubs/projects", options => options.CloseOnAuthenticationExpiration = true);
 app.Run();
 
 public partial class Program { }
