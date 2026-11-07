@@ -18,7 +18,7 @@ describe('workspace navigation', () => {
   it('navigates from the overview to projects and updates focus and title', async () => {
     renderApp()
     await userEvent.click(screen.getByRole('link', { name: /explore projects/i }))
-    expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: 'Projects' })).toBeInTheDocument()
     expect(screen.getByRole('main')).toHaveFocus()
     expect(document.title).toBe('Projects · DevFlow')
     expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('aria-current', 'page')
@@ -38,7 +38,17 @@ describe('workspace navigation', () => {
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
     await userEvent.click(screen.getByRole('link', { name: 'My tasks' }))
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
-    expect(screen.getByRole('heading', { level: 1, name: 'My tasks' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: 'My tasks' })).toBeInTheDocument()
+  })
+
+  it('closes the mobile menu with Escape and returns focus to its button', async () => {
+    renderApp()
+    const toggle = screen.getByRole('button', { name: 'Menu' })
+    await userEvent.click(toggle)
+    screen.getByRole('link', { name: 'Projects' }).focus()
+    await userEvent.keyboard('{Escape}')
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(toggle).toHaveFocus()
   })
 })
 

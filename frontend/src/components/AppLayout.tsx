@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
 import { useAuth } from '../features/auth/AuthContext'
+import { PageBoundary } from './PageBoundary'
 
 const navigation = [
   { to: '/', label: 'Overview', symbol: '◈' },
@@ -15,6 +16,18 @@ export function AppLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
   const main = useRef<HTMLElement>(null)
+  const menuButton = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    if (!menuOpen) return
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+        menuButton.current?.focus()
+      }
+    }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [menuOpen])
   useEffect(() => {
     const title = navigation.find(item => item.to === location.pathname)?.label
       ?? (location.pathname.startsWith('/projects/') ? 'Project' : location.pathname.startsWith('/workspaces/') ? 'Workspace settings' : location.pathname === '/invitations' ? 'Join your team' : location.pathname === '/sign-in' ? 'Sign in' : location.pathname === '/auth/callback' ? 'Signing in' : 'Page not found')
@@ -26,7 +39,7 @@ export function AppLayout() {
     <a href="#main" className="skip-link">Skip to content</a>
     <aside className="sidebar">
       <NavLink to="/" className="brand" aria-label="DevFlow home"><span className="brand-mark">D</span>DevFlow<span className="brand-dot">.</span></NavLink>
-      <button className="menu-toggle button-secondary" aria-expanded={menuOpen} aria-controls="workspace-nav" onClick={() => setMenuOpen(!menuOpen)}>Menu</button>
+      <button ref={menuButton} className="menu-toggle button-secondary" aria-expanded={menuOpen} aria-controls="workspace-nav" onClick={() => setMenuOpen(!menuOpen)}>Menu</button>
       <div className={`sidebar-content ${menuOpen ? 'is-open' : ''}`}>
         <div className="workspace"><span className="workspace-avatar">W</span><div><strong>Your workspace</strong><small>Getting started</small></div></div>
         <p className="nav-caption">WORKSPACE</p>
@@ -38,7 +51,11 @@ export function AppLayout() {
     </aside>
     <div className="min-w-0">
       <header className="topbar"><span>Workspace <span className="mx-3 text-slate-300">/</span> {navigation.find(item => item.to === location.pathname)?.label ?? 'DevFlow'}</span><NavLink className="button-secondary" to={auth.user ? '/account' : '/sign-in'}>{auth.user ? 'Your account' : 'Sign in'}</NavLink></header>
-      <main id="main" ref={main} tabIndex={-1} className="page"><Outlet /></main>
+      <main id="main" ref={main} tabIndex={-1} className="page">
+        <PageBoundary key={location.pathname}>
+          <Suspense fallback={<p role="status">Loading page…</p>}><Outlet /></Suspense>
+        </PageBoundary>
+      </main>
     </div>
   </div>
 }

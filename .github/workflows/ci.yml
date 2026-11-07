@@ -39,6 +39,8 @@ jobs:
           npm audit --audit-level=high
           npm test -- --pool=threads --maxWorkers=2
           npm run build
+      - name: Check initial JavaScript budget
+        run: node scripts/check-bundle.mjs
       - name: Check infrastructure and disabled deployment stages
         run: |
           node --test infrastructure/aws/template.test.mjs

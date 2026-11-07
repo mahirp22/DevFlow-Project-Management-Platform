@@ -37,6 +37,7 @@ try {
         Invoke-Check $npm @('test','--','--pool=threads','--maxWorkers=2')
         Invoke-Check $npm @('run','build')
     } finally {Pop-Location}
+    Invoke-Check 'node' @('scripts/check-bundle.mjs')
     Invoke-Check 'dotnet' @('restore','backend/DevFlow.slnx','--locked-mode','-p:NuGetAudit=true','-p:NuGetAuditMode=all','-p:NuGetAuditLevel=high')
     # Use separate project outputs to avoid locking the running Debug API's DLLs.
     foreach($project in @('backend/tests/DevFlow.UnitTests/DevFlow.UnitTests.csproj','backend/tests/DevFlow.IntegrationTests/DevFlow.IntegrationTests.csproj','backend/src/DevFlow.Migrator/DevFlow.Migrator.csproj')){

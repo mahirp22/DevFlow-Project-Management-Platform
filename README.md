@@ -1,72 +1,84 @@
 # DevFlow
 
-A cloud-based project management platform built incrementally as a software engineering portfolio project.
+[![DevFlow CI](https://github.com/mahirp22/DevFlow-Project-Management-Platform/actions/workflows/ci.yml/badge.svg)](https://github.com/mahirp22/DevFlow-Project-Management-Platform/actions/workflows/ci.yml)
 
-**Current milestone: Phase 9 started: automated verification and delivery preparation; paid AWS hosting deferred.**
+A full-stack team project management application built as a software engineering portfolio project. Organize workspaces and projects, assign tasks, collaborate on a Kanban board and share private attachments.
 
-Implemented: responsive React/TypeScript shell, Tailwind styling, React Router, TanStack Query, API/database connection checks, Vitest/React Testing Library tests, layered ASP.NET Core backend, PostgreSQL/EF Core persistence, initial core-schema migration, liveness/readiness endpoints, development OpenAPI, safe Problem Details responses, structured logs, and xUnit unit/integration tests.
+**Hosting:** the frontend, API and PostgreSQL run locally. AWS Cognito authentication and S3 attachments are working integrations. ECS/RDS/CloudFront infrastructure is defined but not deployed; paid deployment is disabled by default.
 
-Implemented locally in Phase 4: Cognito PKCE sign-in integration, protected routes, verified profile bootstrap and database-backed resource authorization. Follow [Phase 4 setup](docs/phase-4.md) to create your user pool and verify real login.
+## Features
 
-Phase 5 adds workspace/project/task CRUD, team invitations, roles, comments, activity history, task filters and analytics. Follow [the Phase 5 guide](docs/phase-5.md) to restart the API and try the workflows.
+- Cognito sign-in with authorization code + PKCE and server-validated access tokens.
+- Workspaces, projects, invitations and project roles enforced by the API.
+- Tasks with priorities, deadlines, assignees, filters and progress analytics.
+- Four-column Kanban board with drag-and-drop and labelled Move controls.
+- SignalR updates, comments and activity history, with reconnect/polling recovery.
+- Conflict-aware task edits and board ordering.
+- Private S3 upload/finalize/download flow with size/type/checksum checks.
+- Responsive layout, keyboard navigation, lazy project routes and recoverable page-load errors.
 
-Phase 6 adds a drag-and-drop Kanban board, persisted ordering, conflict handling and authorized SignalR updates. See [Phase 6 setup and walkthrough](docs/phase-6.md).
+## Stack and architecture
 
-Phase 7 adds private S3 uploads, metadata/checksum verification, authorized downloads and abandoned-upload cleanup. Start with [the step-by-step AWS setup guide](docs/phase-7.md). Phases 5 and 6 were committed together as `ec1f54f`; Phase 7 was committed as `272644e`. Phase 8 was committed as `98ad466`; see [Phase 8](docs/phase-8.md) for the local-container closeout and [Phase 9](docs/phase-9.md) for CI and local verification.
+| Area | Technologies |
+| --- | --- |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, React Router, TanStack Query, dnd-kit |
+| Backend | C#, ASP.NET Core, EF Core, REST, SignalR |
+| Persistence and identity | PostgreSQL, AWS Cognito, AWS S3 |
+| Verification and delivery | xUnit, Vitest, React Testing Library, Docker, GitHub Actions |
+| Prepared infrastructure | CloudFormation, ECS Fargate, RDS, ALB, S3/CloudFront |
 
-Hosting: React, the API and PostgreSQL run locally. AWS Cognito and S3 integrations have been live-tested. ECS/RDS/CloudFront deployment definitions are prepared but have not been deployed; cloud mutation stages are disabled by default. Existing AWS integrations are not a guarantee of zero AWS charges.
+The backend is a layered modular monolith: Domain models, Application contracts, Infrastructure persistence/services, and API endpoints. PostgreSQL stores project data and memberships. The browser authenticates with Cognito; the API authorizes every project operation. File bytes go directly to S3 using constrained signed uploads, then the API verifies them before finalizing metadata. SignalR announces changes and clients refetch authorized data.
 
-## Start here
+See [architecture](docs/architecture.md), [data model](docs/data-model.md), and [portfolio case study](docs/portfolio.md) for design decisions, tradeoffs and implementation evidence.
 
-**For authentication, start with [the Cognito setup guide](docs/phase-4.md).** Account, Projects and My tasks now require sign-in; the overview and connection checks remain public.
+## Run locally
 
-1. Read [development setup](docs/development.md).
-2. Review [architecture](docs/architecture.md) and [data model](docs/data-model.md).
-3. Follow the [phase plan](docs/roadmap.md).
-4. Follow [Phase 2 database setup, migration and testing](docs/phase-2.md).
-5. Follow [Phase 3 frontend setup, architecture and tests](docs/phase-3.md).
-6. The [Phase 1 report](docs/phase-1.md) preserves the earlier milestone.
+Requirements: .NET SDK **10.0.403**, Node.js **24.22.1**, npm **11.19.1**, PostgreSQL **18.6**, and Docker Desktop with Linux containers for container tests. Versions are pinned in global.json, .node-version and lock files.
 
-## Quick start
+1. Follow [development setup](docs/development.md) and [database setup](docs/phase-2.md). Start PostgreSQL and configure the connection string before EF commands.
+2. Configure Cognito using [Phase 4](docs/phase-4.md). Copy frontend/.env.example to ignored frontend/.env.local and use your own public Cognito identifiers. Backend credentials belong in User Secrets or process configuration, never Git.
+3. From the repository root, restore/build and apply migrations:
 
-Requires .NET SDK 10.0.403, Node.js 24.22.1 with npm 11.19.1, and PostgreSQL 18.6. Run from this repository root. **First start PostgreSQL and set `ConnectionStrings__DevFlow` using the [Phase 2 instructions](docs/phase-2.md).** That guide includes the existing workspace SDK/database setup and Docker instructions.
-
-Terminal 1:
-
-~~~powershell
+```powershell
 dotnet restore backend/DevFlow.slnx --locked-mode
 dotnet tool restore
 dotnet build backend/DevFlow.slnx --no-restore
 dotnet ef database update --project backend/src/DevFlow.Infrastructure --startup-project backend/src/DevFlow.Api --no-build
-dotnet run --project backend/src/DevFlow.Api --launch-profile http
-~~~
+dotnet run --project backend/src/DevFlow.Api --launch-profile http --no-build
+```
 
-Terminal 2:
+4. In a second terminal:
 
-~~~powershell
+```powershell
 Set-Location frontend
 npm.cmd ci
 npm.cmd run dev
-~~~
+```
 
-Open http://localhost:5173 and open **Connection**, then select **Check api** or **Check database**. The API listens on http://127.0.0.1:5080. The frontend development proxy forwards /api requests without requiring permissive CORS.
+Open **http://localhost:5173**. Vite forwards `/api` and WebSockets to the API on 127.0.0.1:5080. For attachments, complete [S3 setup](docs/phase-7.md); the earlier features remain usable without storage configuration. Cognito/S3 usage is not guaranteed to be free.
 
-## Verify
+If dotnet is not on PATH in the original workspace, use the local SDK setup documented in the phase guides. A fresh clone should install the pinned SDK. Stop Vite before npm ci on Windows if native dependencies are locked.
 
-~~~powershell
-dotnet build backend/DevFlow.slnx --no-restore
-Set-Location frontend
-npm.cmd test
-npm.cmd run lint
-npm.cmd run build
-~~~
+## Test and package
 
-Backend: GET /api/health checks liveness. GET /api/health/ready checks database connectivity and migration state. GET /openapi/v1.json serves the development OpenAPI document and includes both health endpoints.
+From the repository root, with Docker Desktop running:
 
-Run `dotnet test --solution backend/DevFlow.slnx --no-build --no-restore` with Docker running. In this workspace, set `DEVFLOW_TEST_POSTGRES` using the Phase 2 guide to test against the local PostgreSQL binary instead. Tests create isolated temporary databases and do not modify application data.
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\Verify.ps1 -IncludeContainers
+```
 
-## Intended stack
+For a local release ZIP and SHA256 manifest, run `scripts/New-LocalRelease.ps1` instead; it performs verification first and writes only to ignored `.artifacts/`. Nothing is uploaded or deployed.
 
-React, TypeScript, Vite, Tailwind CSS, React Router, TanStack Query, dnd-kit; ASP.NET Core, EF Core, SignalR; PostgreSQL; Cognito, S3, RDS, ECS Fargate and CloudFront; Docker and GitHub Actions; xUnit, Vitest and React Testing Library.
+The last published Phase 9 CI run passed frontend, backend and container jobs: [run 42315418271](https://github.com/mahirp22/DevFlow-Project-Management-Platform/actions/runs/42315418271). Phase 10 adds local frontend regression tests and a 125,000-byte gzip initial-JavaScript budget; its hosted CI status requires a subsequent push. Private repositories skip hosted jobs under the current no-paid-runner policy.
 
-Only dependencies needed for the current milestone are installed. Feature libraries and test infrastructure arrive with their phases.
+## Portfolio and operations
+
+- [Case study and interview preparation](docs/portfolio.md)
+- [Five-minute demo and real screenshot checklist](docs/demo.md)
+- [Operations, backups and local releases](docs/operations.md)
+- [Phase 10 changes and validation](docs/phase-10.md)
+- [Milestone history](docs/roadmap.md)
+
+## Known limits
+
+SignalR currently assumes one API instance, the board is bounded to 500 cards, and attachment malware scanning is not implemented. No production uptime, load-test benchmark, WCAG certification or real-user performance score is claimed. Paid AWS hosting is intentionally deferred; its deployment configuration is not proof of a live deployment. See the case study for the reasoning and next steps.

@@ -1,3 +1,5 @@
+Current status: Phases 1-9 are complete within the revised local-hosting scope. Phase 9 is published and CI passed at 2db5321. Phase 10 implementation and local checks are complete; changes await review, commit approval and subsequent hosted CI. Paid AWS hosting remains deferred. See [Phase 10](phase-10.md). Historical notes below describe progress at the time they were written.
+
 # Development milestones
 
 | Phase | Deliverable and exit check |

@@ -1,14 +1,17 @@
+import { lazy } from 'react'
 import { Route, Routes } from 'react-router'
 import { AppLayout } from './components/AppLayout'
 import { OverviewPage, NotFoundPage } from './pages/WorkspacePages'
-import { ProjectsPage } from './features/projects/ProjectsPage'
-import { ProjectPage } from './features/projects/ProjectPage'
-import { WorkspacePage } from './features/projects/WorkspacePage'
-import { TaskPage } from './features/projects/TaskPage'
-import { MyTasksPage } from './features/projects/MyTasksPage'
-import { InvitationPage } from './features/projects/InvitationPage'
 import { ConnectionPage } from './features/connection/ConnectionPage'
 import { AccountPage, CallbackPage, RequireAuth, SignInPage } from './features/auth/AuthPages'
+
+// Keep the overview and sign-in light; project tools load only when visited.
+const ProjectsPage = lazy(() => import('./features/projects/ProjectsPage').then(module => ({ default: module.ProjectsPage })))
+const ProjectPage = lazy(() => import('./features/projects/ProjectPage').then(module => ({ default: module.ProjectPage })))
+const WorkspacePage = lazy(() => import('./features/projects/WorkspacePage').then(module => ({ default: module.WorkspacePage })))
+const TaskPage = lazy(() => import('./features/projects/TaskPage').then(module => ({ default: module.TaskPage })))
+const MyTasksPage = lazy(() => import('./features/projects/MyTasksPage').then(module => ({ default: module.MyTasksPage })))
+const InvitationPage = lazy(() => import('./features/projects/InvitationPage').then(module => ({ default: module.InvitationPage })))
 
 export default function App() {
   return <Routes>
