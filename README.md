@@ -8,6 +8,19 @@ The goal of this project was to practice building a complete application from th
 
 **Hosting status:** the frontend, API, and PostgreSQL run locally. AWS Cognito and S3 are working integrations for authentication and attachments. ECS Fargate, RDS, and S3/CloudFront hosting are defined in infrastructure code but are not deployed. Paid deployment is disabled by default.
 
+## 📑 Table of Contents
+
+- [Technologies](#-technologies)
+- [Features](#-features)
+- [How It Works](#-how-it-works)
+- [Project Structure](#-project-structure)
+- [Running the Project Locally](#-running-the-project-locally)
+- [Demo & Screenshots](#-demo--screenshots)
+- [Testing & CI](#-testing--ci)
+- [What I Learned](#-what-i-learned)
+- [Future Improvements](#-future-improvements)
+- [Documentation](#-documentation)
+
 ## 📦 Technologies
 
 ### Frontend
