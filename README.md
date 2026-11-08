@@ -17,6 +17,51 @@ A full-stack team project management application built as a software engineering
 - Private S3 upload/finalize/download flow with size/type/checksum checks.
 - Responsive layout, keyboard navigation, lazy project routes and recoverable page-load errors.
 
+## Screenshots
+
+Real screenshots from the locally running application with sample project data. The mobile view was captured using browser device emulation.
+
+![DevFlow workspace overview](docs/images/overview.png)
+
+![Portfolio Launch Kanban board with tasks in all four status columns](docs/images/board2.png)
+
+<details>
+<summary>Task details, comments and an S3 attachment</summary>
+
+![Task editor with comments, activity history and a finalized attachment](docs/images/task-details.png)
+
+</details>
+
+<details>
+<summary>Project analytics</summary>
+
+![Project totals, progress by status and open work by assignee](docs/images/analytics.png)
+
+</details>
+
+<details>
+<summary>Task filtering and personal assignments</summary>
+
+![Tasks filtered to To Do and Medium priority](docs/images/task-filters.png)
+
+![My tasks across projects](docs/images/my-tasks.png)
+
+</details>
+
+<details>
+<summary>Project team and roles</summary>
+
+![Project members and roles with email addresses redacted](docs/images/team.png)
+
+</details>
+
+<details>
+<summary>Mobile layout</summary>
+
+<img src="docs/images/mobile.png" alt="My tasks in a narrow emulated mobile viewport" width="390">
+
+</details>
+
 ## Stack and architecture
 
 | Area | Technologies |

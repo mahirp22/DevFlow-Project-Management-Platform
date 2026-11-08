@@ -25,9 +25,13 @@ Use dates appropriate to the day you record. Invite your second account and acce
 6. **3:40–4:30:** Open GitHub's successful CI run. Briefly explain frontend tests, database integration tests and container readiness.
 7. **4:30–5:00:** Explain one tradeoff: single-instance SignalR or local hosting instead of paid ECS/RDS. End with a short next-step plan.
 
+## Screenshot gallery
+
+The README now includes user-captured screenshots of the overview, Kanban board, task details and attachment, analytics, filters, personal assignments, team roles, and an emulated mobile layout. Files are stored in `docs/images/`. The gallery uses `board2.png` for the four-column Kanban board; the earlier `board.png` shows the Tasks tab and is not included. No CI screenshot or video is included; a video is optional and the user has chosen screenshots instead.
+
 ## Capture real screenshots
 
-Capture a desktop board with tasks, task details/comments/attachment, the two-account collaboration view, and a narrow/mobile layout. Crop browser chrome and private account details as needed. Do not use generated mockups as evidence of implemented UI. Add only real screenshots to a future `docs/images/` directory and link them from the README after reviewing them. No screenshots or video are claimed to exist yet.
+Capture a desktop board with tasks, task details/comments/attachment, the two-account collaboration view, and a narrow/mobile layout. Crop browser chrome and private account details as needed. Do not use generated mockups as evidence of implemented UI. Add only real screenshots to `docs/images/` and link them from the README after reviewing them. Static screenshots do not demonstrate real-time delivery or replace interactive testing.
 
 ## Final manual checks
 
